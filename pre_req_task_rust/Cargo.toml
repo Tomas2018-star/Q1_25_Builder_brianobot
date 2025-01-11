@@ -1,0 +1,17 @@
+[package]
+name = "pre_req_task_rust"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+bs58 = "0.5.1"
+borsh = "0.10.3" 
+solana-sdk = "1.15.2"
+solana-client = "1.15.2"
+solana-program = "1.15.2" 
+solana-idlgen = { git = "https://github.com/deanmlittle/solana-idlgen.git" }
+
+
+[[bin]]
+name = "Wallet_Conversion_Utility"
+path = "src/wallet_conversion.rs"
