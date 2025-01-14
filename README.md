@@ -12,6 +12,7 @@ This is a comprehensive reference to the codes i wrote and edited while learning
 - 🦀 [Rust](https://www.rust-lang.org/): A general-purpose programming language emphasizing performance, type safety, and concurrency
 - [Typescript](https://www.typescriptlang.org/): A free and open-source high-level programming language developed by Microsoft that adds static typing with optional type annotations to JavaScript
 - ⚓️ [Anchor](https://www.anchor-lang.com/): A tool that simplifies the process of building Solana programs and emphasis safety.
+- Grit: Motivation from the Most High and Personal Grit 
 
 
 ## 🤝 Contribution
