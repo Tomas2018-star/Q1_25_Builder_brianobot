@@ -31,9 +31,9 @@ const program : Program<Turbin3Prereq> = new Program(IDL, provider);
         .signers([keypair ])
         .rpc(); 
 
-        console.log(`Success! Check out your TX here: https://explorer.solana.com/tx/${txhash}?cluster=devnet`); 
+        console.log(`✅ Success! Check out your TX here: https://explorer.solana.com/tx/${txhash}?cluster=devnet`); 
     } catch(e) {
-        console.error(`Oops, something went wrong: ${e}`) 
+        console.error(`❌ Oops, something went wrong: ${e}`) 
     } 
 })(); 
     
