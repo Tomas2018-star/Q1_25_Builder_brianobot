@@ -8,6 +8,14 @@ This is a comprehensive reference to the codes i wrote and edited while learning
 - [solana-starter](/solana-starter/): Contains SPL relateds edited during the first class
 
 
+## ⚙️ Setup
+- [Install Rust Compiler](https://www.rust-lang.org/tools/install)
+- [Install Node](https://nodejs.org/en/download)
+- [Install Yarn](https://classic.yarnpkg.com/lang/en/docs/install/)
+- [Install Anchor Version Manager](https://www.anchor-lang.com/docs/installation)
+- [Install Solana Command Line Interface](https://docs.solana.com/cli/install-solana-cli-tools)
+
+
 ## 🔨 Built with:
 - 🦀 [Rust](https://www.rust-lang.org/): A general-purpose programming language emphasizing performance, type safety, and concurrency
 - [Typescript](https://www.typescriptlang.org/): A free and open-source high-level programming language developed by Microsoft that adds static typing with optional type annotations to JavaScript
