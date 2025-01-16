@@ -16,13 +16,16 @@ umi.use(signerIdentity(signer));
 (async () => {
     try {
         //1. Load image
+        const image = await readFile("/Users/Apple/Documents/turbin3/solana-starter/ts/cluster1/generug.png");
+        console.log("🌠 Image File = ", image);
+
         //2. Convert image to generic file.
+        const file = createGenericFile(image, "brian_obot.png", {contentType: "image/png"});
+        console.log("📂 file = ", file);
+        
         //3. Upload image
-
-        // const image = ???
-
-        // const [myUri] = ??? 
-        // console.log("Your image URI: ", myUri);
+        const [myUri] = await umi.uploader.upload([file]); 
+        console.log("Your image URI: ", myUri);
     }
     catch(error) {
         console.log("Oops.. Something went wrong", error);
