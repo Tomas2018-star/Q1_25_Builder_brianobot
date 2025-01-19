@@ -45,6 +45,7 @@
   - token mint address
   - token program address, since it owns the token account
 - ATA can be created for Programs, other PDAs and anything at all on-chain that has a public key
+- ATA is a subset of the Token Account, since both can hold the balance of some token, but ATA are easier to find
 - Token Extensions introduce a standard way to extend the standard token functionality; this extensions include;
     - confidential transfer
     - custom tranfer logic
