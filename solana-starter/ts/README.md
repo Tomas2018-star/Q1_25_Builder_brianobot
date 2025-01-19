@@ -44,5 +44,7 @@
   - wallet address of the owner
   - token mint address
   - token program address, since it owns the token account
-
-
+- Token Extensions introduce a standard way to extend the standard token functionality; this extensions include;
+    - confidential transfer
+    - custom tranfer logic
+    - extended metadata
