@@ -50,3 +50,15 @@
     - confidential transfer
     - custom tranfer logic
     - extended metadata
+- Metadata can be added to the Mint Account directly through the ```MetadataPointer``` and the ```TokenMetadata```
+
+- The ```TokenMetadata Interface``` is designed to serve as a standard way of adding metadata to tokens by 
+defining the data structure and set of instructions for handling metadata, with this interface, apps can generically access
+token metadata 
+  - fields in the token metadata data structure
+    - update authority
+    - mint
+    - name
+    - symbol
+    - uri
+    - additional_metadata
