@@ -29,8 +29,7 @@ const connection = new Connection("https://api.devnet.solana.com", commitment);
             null, // no freezeAuthority specified here
             6 // decimal place of the 
         ); 
-        console.log("Raw Return Value: ", mint);
-        console.log("🍵 Mint Address: ",  mint.toBase58());
+        console.log("✅ Mint Address: ",  mint.toBase58());
     } catch(error) {
         console.log(`Oops, something went wrong: ${error}`)
     }

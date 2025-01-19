@@ -5,6 +5,7 @@ import { irysUploader } from "@metaplex-foundation/umi-uploader-irys"
 import { readFile } from "fs/promises"
 
 // Create a devnet connection
+// umi 
 const umi = createUmi('https://api.devnet.solana.com');
 
 let keypair = umi.eddsa.createKeypairFromSecretKey(new Uint8Array(wallet));
@@ -16,7 +17,7 @@ umi.use(signerIdentity(signer));
 (async () => {
     try {
         //1. Load image
-        const image = await readFile("/Users/Apple/Documents/turbin3/solana-starter/ts/cluster1/generug.png");
+        const image = await readFile("/Users/Apple/Downloads/batman.jpg");
         console.log("🌠 Image File = ", image);
 
         //2. Convert image to generic file.
