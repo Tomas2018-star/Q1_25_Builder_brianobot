@@ -6,6 +6,7 @@ This is a comprehensive reference to the codes i wrote and edited while learning
 - [airdrop](/airdrop/): Contain typescript code written and edited for the pre-requisite task
 - [pre_req_task_rust](/pre_req_task_rust/): Contains rust codes written and edited for the second pre-requisite task
 - [solana-starter](/solana-starter/): Contains SPL relateds edited during the first class
+- [Capstone_Letter_of_Intent(LOI).pdf](/Capstone_Letter_of_Intent(LOI).pdf): Capstone Letter of Intent for the Turbin3 2025 Q1 Builders Cohort
 
 
 ## ⚙️ Setup
