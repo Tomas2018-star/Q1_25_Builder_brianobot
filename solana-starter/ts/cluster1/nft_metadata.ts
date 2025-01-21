@@ -17,14 +17,16 @@ umi.use(signerIdentity(signer));
         // Follow this JSON structure
         // https://docs.metaplex.com/programs/token-metadata/changelog/v1.0#json-structure
 
-        const image = "https://devnet.irys.xyz/6qCfXCVQabPhzWiDKT8Bnb5G3BNDPotjXQ1jNoT4jvid"
+        const image = "https://devnet.irys.xyz/FwmSbw8qk2pNzEzYt62mgjKBuLAt8cAVcACHSnoUqUtQ"
         const metadata = {
             name: "Brian Obot",
-            symbol: "Brian O",
-            description: "Legendary NFT From Brian Obot",
+            symbol: "BATMAN",
+            description: "Legendary BATMAN NFT From Brian Obot",
             image: image,
             attributes: [
-                {trait_type: 'color', value: 'red'}
+                {trait_type: 'Collection', value: 'Genesis'},
+                {trait_type: 'Style', value: 'Modern'},
+                {trait_type: 'Color', value: 'Brown'},
             ],
             properties: {
                 files: [
@@ -36,8 +38,10 @@ umi.use(signerIdentity(signer));
             },
             creators: []
         };
-        const myUri = await umi.uploader.uploadJson(metadata);
-        console.log("Your metadata URI: ", myUri);
+        // upload metadata to the blockchain
+        const metadataUri = await umi.uploader.uploadJson(metadata);
+        const cleanedUrl = metadataUri.replace("https://arweave.net", "https://devnet.irys.xyz");
+        console.log("Your metadata URI: ", cleanedUrl);
     }
     catch(error) {
         console.log("Oops.. Something went wrong", error);

@@ -5,7 +5,6 @@ import { irysUploader } from "@metaplex-foundation/umi-uploader-irys"
 import { readFile } from "fs/promises"
 
 // Create a devnet connection
-// umi 
 const umi = createUmi('https://api.devnet.solana.com');
 
 let keypair = umi.eddsa.createKeypairFromSecretKey(new Uint8Array(wallet));
@@ -17,18 +16,26 @@ umi.use(signerIdentity(signer));
 (async () => {
     try {
         //1. Load image
-        const image = await readFile("/Users/Apple/Downloads/batman.jpg");
-        console.log("🌠 Image File = ", image);
+        const image = await readFile("/Users/Apple/Documents/turbin3/solana-starter/ts/cluster1/batman.jpg");
+        console.log("🌠 Image File Size: ", image.length);
 
         //2. Convert image to generic file.
-        const file = createGenericFile(image, "brian_obot.png", {contentType: "image/png"});
+        const file = createGenericFile(
+            image, 
+            "brian_obot.png", 
+            {contentType: "image/jpg"}
+        );
         console.log("📂 file = ", file);
         
-        //3. Upload image
-        const [myUri] = await umi.uploader.upload([file]); 
-        console.log("Your image URI: ", myUri);
+        //3. Upload image to a decentralized storage,
+        // the argument to the upload function is an array of files. and in our case we have just one file.
+        // return value is an array of URIs, and in our case we have just one URI.
+        const [imageUri] = await umi.uploader.upload([file]); 
+        // the url returned might contained a deprecated base url, so we need to replace it with the new one.
+        const cleanedUrl = imageUri.replace("https://arweave.net", "https://devnet.irys.xyz");
+        console.log("Your image URI: ", cleanedUrl);
     }
     catch(error) {
-        console.log("Oops.. Something went wrong", error);
+        console.log("❌ Oops.. Something went wrong", error);
     }
 })();

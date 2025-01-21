@@ -20,15 +20,15 @@ const mint = generateSigner(umi);
     let tx = createNft(umi, {
         mint,
         name: "Brian",
-        symbol: "BOBOT",
-        uri: "https://devnet.irys.xyz/Cq5ockWydoxSPtiBacwoRotksXieamiwWbxXuUMeGx68",
+        symbol: "$BATMAN",
+        // this is the metadata url from the metadata upload step
+        uri: "https://devnet.irys.xyz/5tag514YFaEFVmw29K2FUFH6QMeAgg1piKjE98mi7aAt",
         sellerFeeBasisPoints: percentAmount(10),
     });
 
     let result = await tx.sendAndConfirm(umi);
     const signature = base58.encode(result.signature);
     
-    console.log(`Succesfully Minted! Check out your TX here:\nhttps://explorer.solana.com/tx/${signature}?cluster=devnet`)
-
+    console.log(`Succesfully Minted! Check out your TX here:\nhttps://explorer.solana.com/tx/${signature}?cluster=devnet`);
     console.log("Mint Address: ", mint.publicKey);
 })();

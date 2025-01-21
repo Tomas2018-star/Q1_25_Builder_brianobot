@@ -62,3 +62,10 @@ token metadata
     - symbol
     - uri
     - additional_metadata
+
+
+## Creating An NFT
+Steps involved
+- UPload NFT Media (Picture, Video, etc) to a decentralized storage ()
+- Creating and Uploading the NFT Metadata to the blockchain
+- Minting the NFT on Solana Blockchain
