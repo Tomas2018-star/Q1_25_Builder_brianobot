@@ -8,17 +8,17 @@ pub mod vault {
     use super::*;
 
     pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-        ctx.accounts.initialize(ctx)?;
+        ctx.accounts.initialize()?;
         Ok(())
     }
 
     pub fn deposit(ctx: Context<Payment>, amount: u64) -> Result<()> {
-        ctx.accounts.deposit(ctx, amount)?;
+        ctx.accounts.deposit(amount)?;
         Ok(())
     }
 
     pub fn withdraw(ctx: Context<Payment>, amount: u64) -> Result<()> {
-        ctx.accounts.withdraw(ctx, amount)?;
+        ctx.accounts.withdraw(amount)?;
         Ok(())
     }
 }
@@ -45,9 +45,6 @@ pub struct Initialize<'info> {
     )]
     pub vault_state: Account<'info, VaultState>,
     #[account(
-        init,
-        payer = signer,
-        space = 8 + 10,
         seeds = [b"vault", signer.key().as_ref()],
         bump,
     )]
@@ -57,9 +54,7 @@ pub struct Initialize<'info> {
 }
 
 impl<'info> Initialize<'info> {
-    pub fn initialize(&mut self, ctx: Context<Initialize>) -> Result<()> {
-        ctx.accounts.vault_state.state_bump = ctx.bumps.vault_state;
-        ctx.accounts.vault_state.vault_bump = ctx.bumps.vault;
+    pub fn initialize(&mut self) -> Result<()> {
         Ok(())
     }
 }
@@ -86,11 +81,11 @@ pub struct Payment<'info> {
     
 
 impl<'info> Payment<'info> {
-    pub fn deposit(&mut self, ctx: Context<Payment>, amount: u64) -> Result<()> {
+    pub fn deposit(&mut self, _amount: u64) -> Result<()> {
         Ok(())
     }
 
-    pub fn withdraw(&mut self, ctx: Context<Payment>, amount: u64) -> Result<()> {
+    pub fn withdraw(&mut self, _amount: u64) -> Result<()> {
         Ok(())
     }
 } 
