@@ -28,6 +28,7 @@
 ## Random Stuffs that might make you see stuffs differently
 - All tokens on Solana are effectively data accounts owned by the Token Program.
   - Mint Account are owned by the token programs too!
+  - The account that created the mint account is the mint authority behind the mint, but the owner is the token program
 - Tokens are uniquiely identified by the adderss of the Mint Account
 - Mint Account is effectively the global counter for a specific token stores data like 
   - supply
@@ -69,3 +70,9 @@ Steps involved
 - UPload NFT Media (Picture, Video, etc) to a decentralized storage ()
 - Creating and Uploading the NFT Metadata to the blockchain
 - Minting the NFT on Solana Blockchain
+
+## Create A Token
+Steps involved
+- Create a Mint Account (Token Mint)
+- Create Token Account / Associated Token Account
+- Mint Token into Token Account / Associated Token Account

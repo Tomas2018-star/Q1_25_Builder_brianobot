@@ -26,7 +26,7 @@ const connection = new Connection("https://api.devnet.solana.com", commitment);
             keypair, // payer of the transaction fees
             keypair.publicKey, // mint authority 
             // the account that is authorized to do the actual minting of tokens from the token mint.
-            null, // no freezeAuthority specified here
+            keypair.publicKey, // freezeAuthority specified here
             6 // decimal place of the 
         ); 
         console.log("✅ Mint Address: ",  mint.toBase58());
