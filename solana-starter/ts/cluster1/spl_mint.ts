@@ -10,10 +10,10 @@ const keypair = Keypair.fromSecretKey(new Uint8Array(wallet));
 const commitment: Commitment = "confirmed";
 const connection = new Connection("https://api.devnet.solana.com", commitment);
 
-const token_decimals = 1_000_000n;
+const token_decimals = 9_000_000n;
 
 // Mint address // the value here was gotten after initializing the mint account
-const mint = new PublicKey("qz93JhpN9KBSWovGCY7Vrkd4hKymzR8qSaogUnyerqk");
+const mint = new PublicKey("4oKW6LDzSJ7szCyuACzWEK7p6MqBcevws3u6beLbjkgX");
 
 (async () => {
     try {
@@ -33,7 +33,7 @@ const mint = new PublicKey("qz93JhpN9KBSWovGCY7Vrkd4hKymzR8qSaogUnyerqk");
             keypair.publicKey,
 
         );
-        console.log(`✅ Your ata is: ${ata.address.toBase58()}`);
+        console.log(`✅ Token ATA is: ${ata.address.toBase58()}`);
         
         // techinically the ata is enough to hold the to be created token
         // but as part of my execerise i want to also document the creation of a token account here
@@ -44,7 +44,6 @@ const mint = new PublicKey("qz93JhpN9KBSWovGCY7Vrkd4hKymzR8qSaogUnyerqk");
         //     keypair.publicKey,
         //     keypair,
         // );
-
         // console.log("Token Account: ", tokenAccount.toBase58())
 
         // Mint to ATA
@@ -59,7 +58,7 @@ const mint = new PublicKey("qz93JhpN9KBSWovGCY7Vrkd4hKymzR8qSaogUnyerqk");
             // so in our case, since the decimal value was 6, to get a whole unit of the token, 
             // we must set 1e6, (1_000_000n), 
         );
-        console.log(`Your mint txid: ${mintTx}`);
+        console.log(`✅ Your Mint txid: ${mintTx}`);
 
 
         // // mint to Token Account

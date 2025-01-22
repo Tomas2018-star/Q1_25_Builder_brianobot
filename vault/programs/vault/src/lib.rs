@@ -8,7 +8,7 @@ pub mod vault {
     use super::*;
 
     pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-        ctx.accounts.initialize()?;
+        ctx.accounts.initialize(&ctx.bumps)?;
         Ok(())
     }
 
@@ -54,7 +54,9 @@ pub struct Initialize<'info> {
 }
 
 impl<'info> Initialize<'info> {
-    pub fn initialize(&mut self) -> Result<()> {
+    pub fn initialize(&mut self, bumps: &InitializeBumps) -> Result<()> {
+        self.vault_state.state_bump = bumps.vault_state;
+        self.vault_state.vault_bump = bumps.vault;
         Ok(())
     }
 }
