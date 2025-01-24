@@ -94,3 +94,21 @@ and using a generally acknowledged standard is easier and better for interoperab
 - NonFungibleEdition: Has an Edition Account
 - FungibleAsset: Has no Master Edition and uses zerp decimals places
 - Fungible: Has no Master Edition and uses at least one decimal palce
+
+#### Metadata Account
+- can be set to be mutable
+- JSON standards follows closely with other chains
+
+Metadata account for a mint account is a PDA that holds metadata for a mint account and it is derived from 
+- 'metadata'
+- mint_id
+- metadata_program_id
+
+Some the fields expected in the metadata account are;
+- name (string): Name of the Asset
+- symbol (string): Symbol of the Asset
+- uri (string): URI to external JSON representing the asset
+- creators (array): public keys of each creator
+- update_authority (string): public key of the metadata owner
+- primary_sale_happened (boolean): 
+- 
