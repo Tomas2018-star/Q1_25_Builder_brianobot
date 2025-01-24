@@ -4,6 +4,7 @@ This is a comprehensive reference to the codes i wrote and edited while learning
 
 ## 🗂️ Content/Folders
 - [airdrop](/airdrop/): Contain typescript code written and edited for the pre-requisite task
+- [escrow](/escrow/): Contains Anchor program for an Escrow Smart Contract
 - [pre_req_task_rust](/pre_req_task_rust/): Contains rust codes written and edited for the second pre-requisite task
 - [solana-starter](/solana-starter/): Contains SPL relateds edited during the first class
 - [vault](/vault): Contains Anchor program code for a vault program
