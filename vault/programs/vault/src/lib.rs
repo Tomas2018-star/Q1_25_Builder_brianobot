@@ -1,5 +1,8 @@
 #![allow(unused_imports)]
 use anchor_lang::prelude::*;
+use anchor_lang::system_program::transfer;
+use anchor_lang::system_program::Transfer;
+
 
 declare_id!("HNjhjVf3ashYdQDqZjwmgMBQJgquLDxHpWdCHzRmQiiy");
 
@@ -32,6 +35,7 @@ pub struct VaultState {
 
 }
 
+
 #[derive(Accounts)]
 pub struct Initialize<'info> {
     #[account(mut)]
@@ -40,7 +44,7 @@ pub struct Initialize<'info> {
         init, 
         payer = signer, 
         space = VaultState::INIT_SPACE + 8,
-        seeds = [b"state", signer.key().as_ref()],
+        seeds = [b"state", signer.key().as_ref()], // &str -> bytes
         bump,
     )]
     pub vault_state: Account<'info, VaultState>,
@@ -81,9 +85,20 @@ pub struct Payment<'info> {
     pub system_program: Program<'info, System>,
 }
     
-
 impl<'info> Payment<'info> {
     pub fn deposit(&mut self, _amount: u64) -> Result<()> {
+        // we need the account info of the system program to use in a CPI call
+        let system_program = self.system_program.to_account_info();
+
+        let accounts = Transfer {
+            from: self.signer.account_info(),
+            to: self.vault.account_info(),
+        };
+
+        let cpi_ctx = CpiContext::new(system_program, accounts);
+
+        transfer(cpi_ctx, _amount)?;
+
         Ok(())
     }
 
