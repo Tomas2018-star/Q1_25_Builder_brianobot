@@ -26,6 +26,7 @@
 
 
 ## Random Stuffs that might make you see stuffs differently
+- Think of Tokens as just numbers in a Token Account
 - All tokens on Solana are effectively data accounts owned by the Token Program.
   - Mint Account are owned by the token programs too!
   - The account that created the mint account is the mint authority behind the mint, but the owner is the token program
@@ -76,3 +77,20 @@ Steps involved
 - Create a Mint Account (Token Mint)
 - Create Token Account / Associated Token Account
 - Mint Token into Token Account / Associated Token Account
+
+
+### Metaplex
+This is solana main provider of token standard. they create tools to support creation of open NFT Protocol.
+
+Tokens like ```USDC``` when viewed on the explorer has things like a picture and nice name and symbol, 
+these attributes are obtained from the metadata linked to the Token's Mint account and the standard for defining
+this attribute are provided by the Metaplex Token standard.
+
+Tokens can be created with other standards too that are not metaplex, there is flexibility to this 
+and using a generally acknowledged standard is easier and better for interoperability
+
+#### Metaplex Token Standards
+- NonFungible: has a Master Edition
+- NonFungibleEdition: Has an Edition Account
+- FungibleAsset: Has no Master Edition and uses zerp decimals places
+- Fungible: Has no Master Edition and uses at least one decimal palce
