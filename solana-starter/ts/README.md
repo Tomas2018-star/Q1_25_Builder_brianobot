@@ -112,3 +112,21 @@ Some the fields expected in the metadata account are;
 - update_authority (string): public key of the metadata owner
 - primary_sale_happened (boolean): 
 - 
+
+## Finding PDAs
+Generic way to find PDAs in Typescript library
+
+```typescript
+
+const metadata_seeds = [
+  Buffer.from("metadata"),
+  TOKEN_METADATA_PROGRAM_ID.toBuffer(),
+  mint.toBuffer(),
+];
+
+const [metadata_pda, _bump] = PublicKey.findProgramAddressSync(
+  metadata_seeds,
+  TOKEN_METADATA_PROGRAM_ID
+);
+
+```
