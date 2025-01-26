@@ -26,6 +26,11 @@ pub mod vault {
         ctx.accounts.withdraw(amount)?;
         Ok(())
     }
+
+    pub fn close(ctx: Context<Close>) -> Result<()> {
+        ctx.accounts.close()?;
+        Ok(())
+    }
 }
 
 
@@ -98,6 +103,7 @@ pub struct Payment<'info> {
         seeds = [vault_state.key().as_ref()],
         bump = vault_state.vault_bump,
     )]
+    // can't close this account with close constraint as it is a SystemAccount and not PDA
     pub vault: SystemAccount<'info>,
     pub system_program: Program<'info, System>,
 }
@@ -145,3 +151,49 @@ impl<'info> Payment<'info> {
         Ok(())
     }
 } 
+
+
+#[derive(Accounts)]
+pub struct Close<'info> {
+    #[account(mut)]
+    pub signer: Signer<'info>,
+    #[account(
+        mut,
+        close = signer, // close the account and send the lamports to the signer
+        seeds = [b"state", signer.key().as_ref()],
+        bump = vault_state.state_bump,
+    )]
+    pub vault_state: Account<'info, VaultState>,
+    #[account(
+        mut,
+        seeds = [vault_state.key().as_ref()],
+        bump = vault_state.vault_bump,
+    )]
+    pub vault: SystemAccount<'info>,
+    pub system_program: Program<'info, System>,
+}
+
+impl<'info> Close<'info> {
+    pub fn close(&mut self) -> Result<()> {
+        let system_program = self.system_program.to_account_info();
+
+        let accounts = Transfer {
+            from: self.vault.to_account_info(),
+            to: self.signer.to_account_info(),
+        };
+
+        let seeds = &[
+            b"vault",
+            self.vault_state.to_account_info().key.as_ref(),
+            &[self.vault_state.vault_bump],
+        ];
+
+        let signer_seeds = &[&seeds[..]];
+
+        let cpi_ctx = CpiContext::new_with_signer(system_program, accounts, signer_seeds);
+
+        transfer(cpi_ctx, self.vault.lamports())?;
+
+        Ok(())
+    }
+}
