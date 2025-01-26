@@ -109,12 +109,14 @@ impl<'info> Payment<'info> {
 
         // the accounts needed for the CPI, the Transfer struct is an Account struct for account validation
         let accounts = Transfer {
-            from: self.signer.to_account_info(),
+            from: self.signer.to_account_info(), // here the signer is the from account, and the signer signs the original instruction
             to: self.vault.to_account_info(),
         };
- 
+        
+        // CPI Context basically takes in the program we wish to call and an account struct that holds the accounts needed for the CPI
         let cpi_ctx = CpiContext::new(system_program, accounts);
 
+        // then we can call the instruction with the cpi_ctx and any additional parameters
         transfer(cpi_ctx,  amount)?;
 
         Ok(())
@@ -124,11 +126,19 @@ impl<'info> Payment<'info> {
         let system_program = self.system_program.to_account_info();
 
         let accounts = Transfer {
-            from: self.vault.to_account_info(),
+            from: self.vault.to_account_info(), // here the vault is the from account, so we must sign with the signer account
             to: self.signer.to_account_info(),
         };
 
-        let cpi_ctx = CpiContext::new(system_program, accounts);
+        let seeds = &[
+            b"vault",
+            self.vault_state.to_account_info().key.as_ref(),
+            &[self.vault_state.vault_bump],
+        ];
+
+        let signer_seeds = &[&seeds[..]];
+
+        let cpi_ctx = CpiContext::new_with_signer(system_program, accounts, signer_seeds);
         
         transfer(cpi_ctx, _amount)?;
 
