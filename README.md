@@ -27,6 +27,26 @@ This is a comprehensive reference to the codes i wrote and edited while learning
 - Grit: Motivation from the Most High and Personal Grit 
 
 
+## Anchor Stuffs
+- you can initialize an anchor project to use rust for testing with ```anchor init --test-template rust <project_name>```
+- ```anchor deploy``` and ```anchor test``` would use the cluster speocief in the Anchor.toml file
+- Programs are updated by deploying the program to the same address
+- you can close a program to reclaim the SOL allocated to the program
+  - once a program is closed, the program ID can not be used to deploy a new program
+-
+
+
+
+## Other Random Stuffs
+- Everything above u32, can not be represented correctly in JS number and therefore we must use BN to represent Big Numbers
+  ```js
+  import { BN } from "bn.js";
+
+  let bigNumber = new BN(1);
+  ```
+-
+
+
 ## 🤝 Contribution
 While using this material as a reference material for your studies or research, if you do see the need to contribute to the 
 content of this repository, please you are welcome to do so, Fork the [base repository](https://github.com/brianobot/TURBIN3-Q1-25) which is the actively maintained version of this repository and then create a pull request.
