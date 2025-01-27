@@ -8,7 +8,7 @@ mod instructions;
 pub mod escrow {
     use super::*; // this brings everthing from the parent scope into the escrow mod scope
 
-    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
+    pub fn initialize(_ctx: Context<Initialize>) -> Result<()> {
         Ok(())
     }
 }
