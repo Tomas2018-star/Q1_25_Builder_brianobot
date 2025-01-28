@@ -2,7 +2,8 @@ use anchor_lang::prelude::*;
 
 declare_id!("ASnvhxNh4U9fwETxahiCCGa18LXjRNUDfvJnNAC5tRyg");
 
-mod instructions;
+pub mod instructions;
+pub mod state;
 
 #[program]
 pub mod escrow {
