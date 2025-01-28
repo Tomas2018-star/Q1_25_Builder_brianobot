@@ -1,18 +1,30 @@
+pub mod instructions;
+pub mod state;
+
 use anchor_lang::prelude::*;
+use self::instructions::*;
+
 
 declare_id!("ASnvhxNh4U9fwETxahiCCGa18LXjRNUDfvJnNAC5tRyg");
 
-pub mod instructions;
-pub mod state;
 
 #[program]
 pub mod escrow {
     use super::*; // this brings everthing from the parent scope into the escrow mod scope
 
-    pub fn initialize(_ctx: Context<Initialize>) -> Result<()> {
+    pub fn make(ctx: Context<Make>, seed: u64, receive_amount: u64) -> Result<()> {
+        ctx.accounts.make(seed, receive_amount, &ctx.bumps)?;
+        ctx.accounts.deposit(receive_amount)? ;
+        Ok(())
+    }
+
+    // take wanst to swap token a for token b
+    // you do not have to store them in a vault like you did for token a
+    pub fn take(ctx: Context<Take>) -> Result<()> {
+        ctx.accounts.deposit()?;
+        ctx.accounts.release()?;
+        ctx.accounts.close()?;
         Ok(())
     }
 }
 
-#[derive(Accounts)]
-pub struct Initialize {}
