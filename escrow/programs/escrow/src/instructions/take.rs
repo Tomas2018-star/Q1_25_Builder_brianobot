@@ -11,6 +11,7 @@ use crate::state::EscrowState;
 pub struct Take<'info> {
     #[account(mut)]
     pub taker: Signer<'info>,
+    pub maker: SystemAccount<'info>,
     #[account(address = escrow.mint_a)]
     // we would need the mint again here since
     pub mint_a: InterfaceAccount<'info, Mint>,
@@ -25,22 +26,23 @@ pub struct Take<'info> {
     // this is needed to store the tokens that would be received from 
     pub taker_ata_a: InterfaceAccount<'info, TokenAccount>,
     #[account(
-        init_if_needed,
-        payer = taker,
+        mut,
         associated_token::mint = mint_b, // ? how does this access works associated_token::mint = mint_a
         associated_token::authority = taker,
     )]
     // this is needed to store the tokens that would be give in the escrow from the take
     pub taker_ata_b: InterfaceAccount<'info, TokenAccount>,
     #[account(
-        mut,
+        init_if_needed,
+        payer = taker,
         associated_token::mint = mint_b, // ? how does this access works associated_token::mint = mint_a
-        associated_token::authority = escrow.maker ,// we can not use escrow.maker, // difference between account and public keys as used in different part of anchor
+        associated_token::authority = maker ,// we can not use escrow.maker, // difference between account and public keys as used in different part of anchor
     )] 
     pub maker_ata_b: InterfaceAccount<'info, TokenAccount>, 
     #[account(
         has_one = mint_b, // this checks that the escrow account has a field call mint_b and that field' value == mint_b value
         has_one = mint_a, // same check as above
+        has_one = maker,
         seeds = [b"escrow", escrow.maker.as_ref(), escrow.seed.to_le_bytes().as_ref()],
         bump = escrow.bump,
     )]
@@ -75,7 +77,7 @@ impl<'info> Take<'info> {
         Ok(())
     }
 
-    // transfer the token from the escrow account to the taker
+    // transfer the token from the escrow vault to the taker
     pub fn release(&mut self) -> Result<()> {
         let cpi_program = self.token_program.to_account_info();
 
@@ -88,7 +90,12 @@ impl<'info> Take<'info> {
 
         let seed_bytes = self.escrow.seed.to_le_bytes();
 
-        let seeds = &[b"escrow", self.escrow.maker.as_ref(), seed_bytes.as_ref(), &[self.escrow.bump]];
+        let seeds = &[
+            b"escrow", 
+            self.escrow.maker.as_ref(), 
+            seed_bytes.as_ref(), 
+            &[self.escrow.bump]
+        ];
 
         let signers_seeds = [&seeds[..]];
 
@@ -108,6 +115,7 @@ impl<'info> Take<'info> {
 
         let seed_bytes = self.escrow.seed.to_le_bytes();
 
+        // this seeds needs to match that used in the account struct
         let seeds = &[b"escrow", self.escrow.maker.as_ref(), seed_bytes.as_ref(), &[self.escrow.bump]];
 
         let signers_seeds = [&seeds[..]];
