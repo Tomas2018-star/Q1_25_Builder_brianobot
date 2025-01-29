@@ -5,7 +5,7 @@ use crate::state::{Listing, Marketplace};
 
 
 #[derive(Accounts)]
-pub struct List<'info> {
+pub struct Delist<'info> {
     #[account(mut)]
     pub maker: Signer<'info>,
     pub maker_mint: InterfaceAccount<'info, Mint>,
@@ -66,34 +66,21 @@ pub struct List<'info> {
     pub token_program: Interface<'info, TokenInterface>,
 }
 
-impl<'info> List<'info> {
-    pub fn create_listing(&mut self, price: u64, bumps: &ListBumps) -> Result<()> {
-        self.listing.set_inner( Listing {
-            maker: self.maker.key(),
-            mint: self.maker_mint.key(),
-            price,
-            bump: bumps.listing,
-        });
+impl<'info> Delist<'info> {
+    pub fn withdraw_nft(&mut self) -> Result<()> {
+        let seeds = [
+
+        ];
+
+        let signer_seeds = None;
+
+        // let accounts = TransferChecked 
+
         Ok(())
+
     }
-
-    pub fn refund_nft(&mut self) -> Result<()> {
-        let cpi_program = self.token_program.to_account_info();
-
-        let cpi_accounts = TransferChecked {
-            from: self.maker_ata.to_account_info(),
-            mint: self.maker_mint.to_account_info(),
-            to: self.vault.to_account_info(),
-            authority: self.maker.to_account_info(),
-        };
-
-        let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
-
-        transfer_checked(cpi_ctx, 1, 0)?; // NFT amount is always 1, decimals should be 0 too
-        Ok(())
-    }
-
-    pub fn close_accounts(&mut self) -> Result<()> {
+ 
+    pub fn close_listing(&mut self) -> Result<()> {
         Ok(())
     }
 }

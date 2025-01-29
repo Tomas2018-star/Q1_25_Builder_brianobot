@@ -1,8 +1,12 @@
+#![allow(unused_imports)]
+
 pub mod state;
+pub mod error;
 pub mod contexts;
 pub mod instructions;
 
 pub use state::*;
+pub use error::*;
 pub use contexts::*;
 pub use instruction::*;
 
@@ -14,11 +18,8 @@ declare_id!("F1ARGgzeMbriizXy4x2XiJ1r3sGS8RYmXhQm1iVySdpp");
 pub mod marketplace {
     use super::*;
 
-    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-        msg!("Greetings from: {:?}", ctx.program_id);
+    pub fn initialize(ctx: Context<Initialize>, name: String, fee: u16) -> Result<()> {
+        ctx.accounts.init(name, fee, &ctx.bumps)?;
         Ok(())
     }
 }
-
-#[derive(Accounts)]
-pub struct Initialize {}
