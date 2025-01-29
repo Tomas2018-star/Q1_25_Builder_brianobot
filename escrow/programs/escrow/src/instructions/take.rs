@@ -12,41 +12,48 @@ pub struct Take<'info> {
     #[account(mut)]
     pub taker: Signer<'info>,
     #[account(address = escrow.mint_a)]
+    // we would need the mint again here since
     pub mint_a: InterfaceAccount<'info, Mint>,
     #[account(address = escrow.mint_b)]
     pub mint_b: InterfaceAccount<'info, Mint>,
     #[account(
-        mut,
-        associated_token::mint = escrow.mint_a, // ? how does this access works associated_token::mint = mint_a
+        init_if_needed,
+        payer = taker,
+        associated_token::mint = mint_a, // ? how does this access works associated_token::mint = mint_a
         associated_token::authority = taker,
     )]
+    // this is needed to store the tokens that would be received from 
     pub taker_ata_a: InterfaceAccount<'info, TokenAccount>,
     #[account(
-        mut,
-        associated_token::mint = escrow.mint_b, // ? how does this access works associated_token::mint = mint_a
+        init_if_needed,
+        payer = taker,
+        associated_token::mint = mint_b, // ? how does this access works associated_token::mint = mint_a
         associated_token::authority = taker,
     )]
+    // this is needed to store the tokens that would be give in the escrow from the take
     pub taker_ata_b: InterfaceAccount<'info, TokenAccount>,
     #[account(
         mut,
-        associated_token::mint = escrow.mint_b, // ? how does this access works associated_token::mint = mint_a
-        associated_token::authority = escrow.maker,
+        associated_token::mint = mint_b, // ? how does this access works associated_token::mint = mint_a
+        associated_token::authority = escrow.maker ,// we can not use escrow.maker, // difference between account and public keys as used in different part of anchor
     )] 
     pub maker_ata_b: InterfaceAccount<'info, TokenAccount>, 
     #[account(
-        mut,
+        has_one = mint_b, // this checks that the escrow account has a field call mint_b and that field' value == mint_b value
+        has_one = mint_a, // same check as above
         seeds = [b"escrow", escrow.maker.as_ref(), escrow.seed.to_le_bytes().as_ref()],
-        bump = escrow.bump
+        bump = escrow.bump,
     )]
     pub escrow: Account<'info, EscrowState>,
     #[account(
         mut,
-        associated_token::mint = escrow.mint_a,
+        associated_token::mint = mint_a,
         associated_token::authority = escrow,
     )]
     pub vault: InterfaceAccount<'info, TokenAccount>,
     pub token_program: Interface<'info, TokenInterface>,
     pub system_program: Program<'info, System>, // needed to close the escrow and vault account
+    pub associated_token_program: Program<'info, AssociatedToken>,
 
 }
 
