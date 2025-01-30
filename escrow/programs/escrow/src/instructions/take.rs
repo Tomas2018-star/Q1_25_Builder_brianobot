@@ -26,7 +26,7 @@ pub struct Take<'info> {
     // this is needed to store the tokens that would be received from 
     pub taker_ata_a: InterfaceAccount<'info, TokenAccount>,
     #[account(
-        mut,
+        mut, 
         associated_token::mint = mint_b, // ? how does this access works associated_token::mint = mint_a
         associated_token::authority = taker,
     )]
@@ -95,13 +95,14 @@ impl<'info> Take<'info> {
             self.escrow.maker.as_ref(), 
             seed_bytes.as_ref(), 
             &[self.escrow.bump]
-        ];
+        ]; 
 
         let signers_seeds = [&seeds[..]];
 
         let cpi_ctx = CpiContext::new_with_signer(cpi_program, cpi_accounts, &signers_seeds);
 
         transfer_checked(cpi_ctx, self.escrow.receive_amount, self.mint_a.decimals)?;
+
         Ok(())
     }
 

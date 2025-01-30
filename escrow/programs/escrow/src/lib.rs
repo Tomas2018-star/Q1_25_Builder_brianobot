@@ -18,7 +18,7 @@ pub mod escrow {
         Ok(())
     }
 
-    // take wanst to swap token a for token b
+    // take wants to swap token b for token a
     // you do not have to store them in a vault like you did for token a
     pub fn take(ctx: Context<Take>) -> Result<()> {
         ctx.accounts.deposit()?;
