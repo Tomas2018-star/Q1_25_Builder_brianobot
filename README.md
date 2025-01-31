@@ -36,8 +36,6 @@ This is a comprehensive reference to the codes i wrote and edited while learning
   - once a program is closed, the program ID can not be used to deploy a new program
 -
 
-
-
 ## Other Random Stuffs
 - Everything above u32, can not be represented correctly in JS number and therefore we must use BN to represent Big Numbers
   ```js
@@ -45,8 +43,64 @@ This is a comprehensive reference to the codes i wrote and edited while learning
 
   let bigNumber = new BN(1);
   ```
--
 
+## Anchor CPIs and Errors
+- anchor cpi feature generates CPI helper functions for invoking instructions on existign anchor program
+- if you do not have access rto CPI helper function, you can still use invoke and invoke_signed directly
+- ```error_code``` attribute macro is used to create Custom Anchor Errors
+
+CPIContext are used to create CPI Context which are similar to COntext, 
+
+Fields on the CPIContext include;
+- accounts: List of accounts needed for the CPI Call, Type must implements the ```ToAccountMetas``` adn ```ToAccountInfos<'info>``` traits, which are added by ```#[derive(Accounts)]``` attribute macro
+- remaining_Accounts
+- program
+- signer_seeds
+
+To create a new one that passes the current transaction signature to the transaction that would be perform by the cpi use this
+
+```rust
+CPIContext::new(cpi_program, cpi_accounts);
+```
+
+You use ```CPIContext::new_with_signer``` to construct  new instance when signing on behalf of  PDA for the CPI
+
+```rust
+CPIContext::new_with_signer(cpi_program, cpi_accounts, seeds);
+```
+
+When calling another anchor program with a published crate, anchor can generate instruction builders and CPI helper functions for you, simple add the program as a dependency to your ```Cargo.toml``` file and specify the ```cpi`` feature
+
+```Toml
+[dependencies]
+callee = { path = "../callee", features = ["cpi"] }
+```
+by doing so, you have enable cpu feature and your program gains access to the callee::cpi module.
+the cpi modules turns callee's instruction handlers into Rust functions, these functions takes CPIContext and any extra data needed for the instruction, 
+
+### Errors
+Ultimately all programs return the same error type ```ProgramError```, however you can use ```AnchorError``` as an abstraction on top of the ProgramError, 
+
+fields on the AnchorError
+```rust
+pub struct AnchorError {
+  pub error_name: String,
+  pub error_code_number: u32,
+  pub error_msg: String,
+  pub error_origin: Option<ErrorOrigin>,
+  pub compared_values: Option<ComparedValues>,
+}
+```
+
+you can add custom errors like so
+```rust
+#[error_code]
+pub enum MyError {
+    #[msg("MyAccount may only hold data below 100")]
+    DataTooLarge
+}
+```
+you can use the ```require!``` macro to simplify returning errors
 
 ## 🤝 Contribution
 While using this material as a reference material for your studies or research, if you do see the need to contribute to the 

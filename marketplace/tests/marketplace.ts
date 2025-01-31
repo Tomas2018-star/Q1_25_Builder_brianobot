@@ -54,7 +54,7 @@ describe("marketplace", () => {
     );
 
     // MintTo nft to maker ATA
-    mintTo(connection, maker, mint, maker_ata.address, maker, 1);
+    mintTo(connection, maker, mint, maker_ata.address, maker, 0); // decimals must alwaus be 0 for nft
   })
 
   it("Is initialized!", async () => {

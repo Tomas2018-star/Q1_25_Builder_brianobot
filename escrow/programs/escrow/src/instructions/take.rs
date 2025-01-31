@@ -12,11 +12,11 @@ pub struct Take<'info> {
     #[account(mut)]
     pub taker: Signer<'info>,
     pub maker: SystemAccount<'info>,
-    #[account(address = escrow.mint_a)]
+    #[account(address = escrow.mint_a)] // this constaints prevent abuse of the mint as was provided during the escrow creation process
     // we would need the mint again here since
     pub mint_a: InterfaceAccount<'info, Mint>,
-    #[account(address = escrow.mint_b)]
-    pub mint_b: InterfaceAccount<'info, Mint>,
+    #[account(address = escrow.mint_b)] // this constaints prevent abuse of the mint as was provided during the escrow creation process
+    pub mint_b: InterfaceAccount<'info, Mint>, 
     #[account(
         init_if_needed,
         payer = taker,
@@ -26,7 +26,7 @@ pub struct Take<'info> {
     // this is needed to store the tokens that would be received from 
     pub taker_ata_a: InterfaceAccount<'info, TokenAccount>,
     #[account(
-        mut, 
+        mut,  // this is expected to already exist for the taker since they must own those tokens
         associated_token::mint = mint_b, // ? how does this access works associated_token::mint = mint_a
         associated_token::authority = taker,
     )]
@@ -35,12 +35,16 @@ pub struct Take<'info> {
     #[account(
         init_if_needed,
         payer = taker,
+        // the constaints below are called SPL Constraints, and they are either used as checked or as initialization values
+        // they are used as checks when the account is not init, and vice versa
         associated_token::mint = mint_b, // ? how does this access works associated_token::mint = mint_a
         associated_token::authority = maker ,// we can not use escrow.maker, // difference between account and public keys as used in different part of anchor
+    
     )] 
     pub maker_ata_b: InterfaceAccount<'info, TokenAccount>, 
     #[account(
         has_one = mint_b, // this checks that the escrow account has a field call mint_b and that field' value == mint_b value
+        // escrow.mint_b == mint_b (from the top of the Account struct)
         has_one = mint_a, // same check as above
         has_one = maker,
         seeds = [b"escrow", escrow.maker.as_ref(), escrow.seed.to_le_bytes().as_ref()],
@@ -49,8 +53,10 @@ pub struct Take<'info> {
     pub escrow: Account<'info, EscrowState>,
     #[account(
         mut,
-        associated_token::mint = mint_a,
+        associated_token::mint = mint_a, // the constraint here applies to associated_token
+        // vault.mint == mint_a
         associated_token::authority = escrow,
+        // vault.authority == escrow
     )]
     pub vault: InterfaceAccount<'info, TokenAccount>,
     pub token_program: Interface<'info, TokenInterface>,
@@ -60,7 +66,7 @@ pub struct Take<'info> {
 }
 
 impl<'info> Take<'info> {
-    // transfer the token from the taker to the escrow account
+    // transfer the token from the taker to the maker ata
     pub fn deposit(&mut self) -> Result<()> {
         let cpi_program = self.token_program.to_account_info();
 
@@ -77,7 +83,7 @@ impl<'info> Take<'info> {
         Ok(())
     }
 
-    // transfer the token from the escrow vault to the taker
+    // transfer the token from the escrow vault ata to the taker
     pub fn release(&mut self) -> Result<()> {
         let cpi_program = self.token_program.to_account_info();
 
@@ -89,6 +95,9 @@ impl<'info> Take<'info> {
         };
 
         let seed_bytes = self.escrow.seed.to_le_bytes();
+
+        // this is the original seeds for the escrow account 
+        // [b"escrow", escrow.maker.as_ref(), escrow.seed.to_le_bytes().as_ref()],
 
         let seeds = &[
             b"escrow", 

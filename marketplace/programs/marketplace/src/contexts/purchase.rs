@@ -1,5 +1,5 @@
 use anchor_lang::{prelude::*, system_program::{transfer, Transfer}};
-use anchor_spl::{associated_token::AssociatedToken, token::{close_account, transfer_checked, CloseAccount, TransferChecked}, token_interface::{Mint, TokenAccount, TokenInterface}};
+use anchor_spl::{associated_token::AssociatedToken, token::{close_account, mint_to, transfer_checked, CloseAccount, MintTo, TransferChecked}, token_interface::{Mint, TokenAccount, TokenInterface}};
 
 
 use crate::state::{Listing, Marketplace};
@@ -94,7 +94,6 @@ impl<'info> Purchase<'info> {
         Ok(())
     }
 
-
     // transfer the nft
     pub fn transfer(&mut self) -> Result<()> {
         let cpi_program = self.token_program.to_account_info();;
@@ -147,4 +146,30 @@ impl<'info> Purchase<'info> {
         
         Ok(())
     }
+
+    // reward buter
+    pub fn reward_buyer(&mut self) -> Result<()> {
+        let cpi_program = self.token_program.to_account_info();
+
+        let cpi_accounts = MintTo {
+            mint: self.rewards_mint.to_account_info(), 
+            to: self.taker.to_account_info(), // the ATA that belongs to the taker
+            authority: self.marketplace.to_account_info(),
+        };
+
+        let seeds = &[
+            "marketplace".as_bytes(), 
+            self.marketplace.name.as_str().as_bytes(),
+            &[self.marketplace.bump]
+        ];
+
+        let signer_seeds = &[&seeds[..]];
+
+        let cpi_ctx = CpiContext::new_with_signer(cpi_program, cpi_accounts, signer_seeds);
+
+        mint_to(cpi_ctx, 1)?;
+
+        Ok(())
+    }
+
 }
