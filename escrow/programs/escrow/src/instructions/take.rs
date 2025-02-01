@@ -43,6 +43,8 @@ pub struct Take<'info> {
     )] 
     pub maker_ata_b: InterfaceAccount<'info, TokenAccount>, 
     #[account(
+        mut,
+        close = taker, 
         has_one = mint_b, // this checks that the escrow account has a field call mint_b and that field' value == mint_b value
         // escrow.mint_b == mint_b (from the top of the Account struct)
         has_one = mint_a, // same check as above

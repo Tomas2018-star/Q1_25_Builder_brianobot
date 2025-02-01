@@ -17,3 +17,7 @@ This Anchor Programs allows for the trustless swapping of tokens (of different m
 - token_program: Needed to carry out transfer on ATA
 - system_program: Needed to create Account
 - associated_token_program: Needed to Createa ATA
+
+## Notes
+- It is not good practice to close ATAs (Associated Token Accounts)
+- 

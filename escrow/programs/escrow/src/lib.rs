@@ -18,6 +18,12 @@ pub mod escrow {
         Ok(())
     }
 
+    pub fn refund(ctx: Context<Refund>) -> Result<()> {
+        ctx.accounts.refund()?;
+        ctx.accounts.close()?;
+        Ok(())
+    }
+
     // take wants to swap token b for token a
     // you do not have to store them in a vault like you did for token a
     pub fn take(ctx: Context<Take>) -> Result<()> {
