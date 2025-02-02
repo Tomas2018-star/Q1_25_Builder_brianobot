@@ -9,7 +9,7 @@ use crate::error::MarketplaceError;
 #[instruction(name: String)]
 pub struct Initialize<'info> {
     #[account(mut)]
-    pub admin: Signer<'info>, // manages the marketplace
+    pub admin: Signer<'info>, // manages/owns the marketplace
     #[account(
         init,
         payer = admin,
@@ -17,22 +17,28 @@ pub struct Initialize<'info> {
         seeds = [b"marketplace", name.as_str().as_bytes()],
         bump,
     )]
+    // this would control all the ATA needed to interact for each sales (per sales vault)
     pub marketplace: Account<'info, Marketplace>, // configuratoin for the marketplace
     #[account(
         seeds = [b"treasury", marketplace.key().as_ref()],
         bump,
     )]
-    pub treasury: SystemAccount<'info>, // ?? Please check up thr intention behind this
+    // holds SOls gotten from the platform fee collection duration sales of nfts
+    pub treasury: SystemAccount<'info>, //
     #[account(
         init, 
         payer = admin,
         seeds = [b"rewards", marketplace.key().as_ref()],
         bump,
+        // when initializing a mint with anchor
+        // you must specify the mint authority and decimal
         mint::authority = marketplace,
         mint::decimals = 6,
     )]
     pub rewards_mint: InterfaceAccount<'info, Mint>,
+    // needed because we are initializing the marketplace account
     pub system_program: Program<'info, System>,
+    // needed because we are creating a token account for reward mint
     pub token_program: Interface<'info, TokenInterface>
 }
 
@@ -49,6 +55,7 @@ impl<'info> Initialize<'info> {
             rewards_mint_bump: bumps.rewards_mint,
             name
         });
+         
         Ok(())
     }
 }
