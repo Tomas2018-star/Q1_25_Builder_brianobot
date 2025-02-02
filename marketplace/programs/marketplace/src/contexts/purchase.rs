@@ -96,7 +96,7 @@ impl<'info> Purchase<'info> {
 
     // transfer the nft
     pub fn transfer(&mut self) -> Result<()> {
-        let cpi_program = self.token_program.to_account_info();;
+        let cpi_program = self.token_program.to_account_info();
 
         let cpi_accounts = TransferChecked {
             from: self.vault.to_account_info(),
