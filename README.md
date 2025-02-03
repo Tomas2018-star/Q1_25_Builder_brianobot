@@ -5,6 +5,7 @@ This is a comprehensive reference to the codes i wrote and edited while learning
 ## 🗂️ Content/Folders
 - [airdrop](/airdrop/): Contain typescript code written and edited for the pre-requisite task
 - [escrow](/escrow/): Contains Anchor program for an Escrow Smart Contract
+- [amm-program](/amm-program): Contains Anchor program for an Automated Market Maker Smart Contract
 - [marketplace](/marketplace/): Contains Anchor program for NFT Marketplace Smart Contract
 - [pre_req_task_rust](/pre_req_task_rust/): Contains rust codes written and edited for the second pre-requisite task
 - [solana-starter](/solana-starter/): Contains SPL relateds edited during the first class
@@ -43,6 +44,8 @@ This is a comprehensive reference to the codes i wrote and edited while learning
 
   let bigNumber = new BN(1);
   ```
+- Whenever you add ```anchor-spl``` as a dependenc for a program, also add the ```idl-build``` for it in the features section of the 
+Cargo.toml file
 
 ## Anchor CPIs and Errors
 - anchor cpi feature generates CPI helper functions for invoking instructions on existign anchor program
