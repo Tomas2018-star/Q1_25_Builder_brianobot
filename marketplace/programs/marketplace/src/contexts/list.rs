@@ -1,7 +1,8 @@
 use anchor_lang::prelude::*;
 use anchor_spl::{associated_token::AssociatedToken, metadata::{MasterEditionAccount, Metadata, MetadataAccount}, token::{transfer_checked, TransferChecked}, token_interface::{Mint, TokenAccount, TokenInterface}};
 
-use crate::{state::{Listing, Marketplace}, MarketplaceError};
+use crate::state::{Listing, Marketplace};
+use crate::error::MarketplaceError;
 
 
 #[derive(Accounts)]

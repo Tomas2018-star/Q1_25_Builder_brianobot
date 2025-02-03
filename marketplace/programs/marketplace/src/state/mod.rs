@@ -1,6 +1,6 @@
 
 pub mod marketplace;
-pub mod listing;
-
 pub use marketplace::*;
+
+pub mod listing;
 pub use listing::*;

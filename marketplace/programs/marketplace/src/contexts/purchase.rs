@@ -59,7 +59,7 @@ pub struct Purchase<'info> {
 
 
 impl<'info> Purchase<'info> {
-    // send solr
+    // send sol
     // transfering price from taker to the maker
     // take part of the price as fee
     pub fn pay(&mut self) -> Result<()> {
@@ -105,6 +105,7 @@ impl<'info> Purchase<'info> {
             authority: self.listing.to_account_info(),
         };
 
+        // here the seeds match that of the authority in the cpi accounts TransferChecked
         let seeds = [
             &self.marketplace.key().to_bytes()[..], 
             &self.maker_mint.key().to_bytes()[..],
