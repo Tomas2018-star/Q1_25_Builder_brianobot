@@ -16,3 +16,13 @@ if x = $10
 and y = $20
 
 the pool must contain 2x: y
+
+## Flow
+- A Token Pair is Initialized
+  - token x: 1 part of the swap pair
+    - ATA to store token X for the AMM
+  - token y: 1 part of the swap pair
+    - ATA to store token Y for the AMM
+
+- Mint LP: the mint account that would be used to reward the Liquidity Provider
+- Config: Account holding configuration for the pair
