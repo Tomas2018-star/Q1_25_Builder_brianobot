@@ -4,7 +4,7 @@ use anchor_lang::system_program::transfer;
 use anchor_lang::system_program::Transfer;
 
 
-declare_id!("HNjhjVf3ashYdQDqZjwmgMBQJgquLDxHpWdCHzRmQiiy");
+declare_id!("AchzGaZqMAcAyH3ggS1c4BbEnJQ2KKByzMcsUALX8XjZ");
 
 #[program]
 pub mod vault {
@@ -35,7 +35,7 @@ pub mod vault {
 
 
 #[account]
-#[derive(InitSpace)] // needed to automatically determine the size of the account
+#[derive(InitSpace, Debug)] // needed to automatically determine the size of the account
 // it creates a Constants (INIT_SPACE ) that holds the size of the account
 pub struct VaultState {
     pub vault_bump: u8,
@@ -66,23 +66,31 @@ pub struct Initialize<'info> {
         bump,
     )]
     pub vault: SystemAccount<'info>, // represent any account owned by the system program
+    // so this basically means any account owned by the system that matches the seeds list above
     // this include most wallets (keypairs)
     pub system_program: Program<'info, System>, // needed because an account creation happens and this is done by the system program
 }
 
 impl<'info> Initialize<'info> {
     // anchor creates a <AccountStructName>Bumps struct that holds the bump values for the seeds
-    pub fn initialize(&mut self, bumps: &InitializeBumps) -> Result<()> {
+    pub fn  initialize(&mut self, bumps: &InitializeBumps) -> Result<()> {
         // this was the route followed in the class
         // self.vault_state.state_bump = bumps.vault_state;
         // self.vault_state.vault_bump = bumps.vault;
 
         // following the set_inner patterns feels cleaner and more idiomatic
         // set_inner is defined in the impl block of the Account type
+        msg!("ℹ About to Initialize the Vault State Account");
         self.vault_state.set_inner( VaultState {
             vault_bump: bumps.vault,
             state_bump: bumps.vault_state,
         });
+
+        msg!("📝 Signer Account: {:?}", self.signer);
+        msg!("📝 Vault State Account: {:?}", self.vault_state);
+        msg!("📝 Vault Account: {:?}", self.vault);
+        msg!("📝 System Program: {:?}", self.system_program);
+
         Ok(())
     }
 }
@@ -104,6 +112,8 @@ pub struct Payment<'info> {
         bump = vault_state.vault_bump,
     )]
     // can't close this account with close constraint as it is a SystemAccount and not PDA
+    /// CHECK: this is to check cup cost saving from using UNCHECKED ACCOUNT
+    /// there is no reasonable savings by justing using UncheckedAccount
     pub vault: SystemAccount<'info>,
     pub system_program: Program<'info, System>,
 }
