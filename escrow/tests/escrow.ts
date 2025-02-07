@@ -1,120 +1,174 @@
 import * as anchor from "@coral-xyz/anchor";
 import { Program, BN } from "@coral-xyz/anchor";
 import { Escrow } from "../target/types/escrow";
-import { createMint, getAssociatedTokenAddressSync, getOrCreateAssociatedTokenAccount, mintTo, TOKEN_PROGRAM_ID } from "@solana/spl-token";
-import { Keypair, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
+import { ASSOCIATED_TOKEN_PROGRAM_ID, createMint, getAssociatedTokenAddressSync, getOrCreateAssociatedTokenAccount, mintTo, TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import { Keypair, LAMPORTS_PER_SOL, PublicKey, SystemProgram } from "@solana/web3.js";
 import { randomBytes } from 'node:crypto';
 import { confirmTransaction } from "@solana-developers/helpers";
+import { assert } from "chai";
 
 const programId = new PublicKey("ASnvhxNh4U9fwETxahiCCGa18LXjRNUDfvJnNAC5tRyg");
 
 
 describe("escrow", () => {
-  // Configure the client to use the local cluster.
   const provider = anchor.AnchorProvider.env()
+  
   anchor.setProvider(provider);
 
   const connection = provider.connection;
 
   const program = anchor.workspace.Escrow as Program<Escrow>;
 
-  let maker = anchor.web3.Keypair.generate();
-  let taker = anchor.web3.Keypair.generate();
+  // accounts involved
+  // maker 
+  // mint_a
+  // mint_b
+  // maker_ata_a
+  // escrow
+  // vault
+  // system_program
+  // token_program
+  // associated_token_program
 
-  const seed = new BN(randomBytes(8));
-  const amount = new BN(1_000_000);
-
-  let [escrow, escrow_bump] = PublicKey.findProgramAddressSync([
-      Buffer.from("escrow"),
-      maker.publicKey.toBuffer(),
-      seed.toArrayLike(Buffer, 'le', 8),
-    ],
-    programId
-  );
-
+  let maker;
+  let taker;
+  let mintA;
+  let mintB;
+  let makerAtaA;
+  let takerAtaB;
   let vault;
-  let mint_a_PublicKey;
-  let mint_b_PublicKey;
-  let maker_ata_a;
-  let taker_ata_b;
+  let escrow;
+  let bump;
 
-  before(
-    "Create Accounts",
-    async () => {
-      let airdrop1 = await provider.connection.requestAirdrop(maker.publicKey, 2 * LAMPORTS_PER_SOL);
-      let airdrop1_tx = await confirmTransaction(connection, airdrop1, "confirmed");
-      console.log("✅ Airdrop 1: ", airdrop1_tx);
+  const seeds = new BN(randomBytes(8));
 
-      let airdrop2 = await provider.connection.requestAirdrop(taker.publicKey, 2 * LAMPORTS_PER_SOL);
-      let airdrop2_tx = await confirmTransaction(connection, airdrop2, "confirmed");
-      console.log("✅ Airdrop 2: ", airdrop2_tx);
+  before(async () => {
+      // create required accounts
+      maker = anchor.web3.Keypair.generate();
+      taker = anchor.web3.Keypair.generate();
 
-      // create token mint that would be used to create escrow
-      mint_a_PublicKey = await createMint(
+      await airdrop(connection, maker.publicKey, 5);
+      await airdrop(connection, taker.publicKey, 5);
+
+      mintA = await createMint(
           connection,
           maker,
           maker.publicKey,
           null,
           6,
       );
-      console.log("✅ Mint A Address: ", mint_a_PublicKey);
+      console.log("✅ Mint A Address: ", mintA);
       
-      mint_b_PublicKey = await createMint(
+      mintB = await createMint(
           connection,
           taker,
           taker.publicKey,
           null,
           6,
       );
-      console.log("✅ Mint B Address: ", mint_b_PublicKey);
+      console.log("✅ Mint B Address: ", mintB);
 
-      maker_ata_a = await getOrCreateAssociatedTokenAccount(
+
+      makerAtaA = await getOrCreateAssociatedTokenAccount(
         connection,
         maker,
-        mint_a_PublicKey,
+        mintA,
         maker.publicKey,
       );
-      console.log("✅ Maker ATA A: ", maker_ata_a.address);
+      console.log("✅ Maker ATA A: ", makerAtaA.address);
       
-      taker_ata_b = await getOrCreateAssociatedTokenAccount(
+      takerAtaB = await getOrCreateAssociatedTokenAccount(
         connection,
         taker,
-        mint_b_PublicKey,
+        mintB,
         taker.publicKey,
       );
-      console.log("✅ Taker ATA B: ", taker_ata_b.address);
+      console.log("✅ Taker ATA B: ", takerAtaB.address);
 
       // mint token a to maker and token b to taker
-      let mint1_tx = await mintTo(connection, maker, mint_a_PublicKey, maker_ata_a.address, maker, 10000 * 10 ** 6);
+      let mint1_tx = await mintTo(connection, maker, mintA, makerAtaA.address, maker, 10000 * 10 ** 6);
       console.log("✅ Mint 1 Tx: ", mint1_tx);
 
-      let mint2_tx = await mintTo(connection, 
-      taker, mint_b_PublicKey, taker_ata_b.address, taker, 20000 * 10 ** 6);
+      let mint2_tx = await mintTo(connection, taker, mintB, takerAtaB.address, taker, 20000 * 10 ** 6);
       console.log("✅ Mint 2 Tx: ", mint2_tx);
-    }
-  );
 
-  it("Make Escrow!", async () => {
-    vault = getAssociatedTokenAddressSync(
-        mint_a_PublicKey,
-        escrow,
-        true,
-        TOKEN_PROGRAM_ID,
-    );
-    console.log("✅ Vault Address: ", vault);
+      [escrow, bump] = anchor.web3.PublicKey.findProgramAddressSync([
+        Buffer.from("escrow"),
+        maker.publicKey.toBuffer(),
+        // seeds.toBuffer(),
+      ], program.programId);
+      
+      console.log("✅ Escrow Account created: ", escrow);
 
-    try {
-      const tx = await program.methods.make(seed, amount).accountsPartial({
-        maker: maker.publicKey,
-        mintA: mint_a_PublicKey,
-        mintB: mint_b_PublicKey,
-        makerAtaA: maker_ata_a,
-        tokenProgram: TOKEN_PROGRAM_ID,
-      }).signers([maker]).rpc();
-
-    } catch(error) {
-      console.log("Error Ocurred: ", error)
-    }
+      vault = getAssociatedTokenAddressSync(
+          mintA,
+          escrow,
+          true,
+          TOKEN_PROGRAM_ID,
+      );
+      console.log("✅ Vault Address: ", vault);
 
   });
+
+  it("Make Escrow!", async () => {
+      const tx = await program.methods
+      .make(seeds, new BN(1_000_000_000))
+      .accounts({
+        maker: maker.publicKey,
+        mintA: mintA,
+        mintB: mintB,
+        makerAtaA: makerAtaA.address,
+        escrow: escrow,
+        vault: vault,
+        systemProgram: SystemProgram.programId,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+      })
+      .signers([maker])
+      .rpc();
+
+      console.log("✅ Your Make transaction signature", tx);
+  });
+
+  it("Request Refund!", async () => {
+    const tx = await program.methods
+      .refund()
+      .accounts({
+        maker: maker.publicKey,
+        mintA: mintA,
+        mintB: mintB,
+        makerAtaA: makerAtaA.address,
+        escrow: escrow,
+        vault: vault,
+        systemProgram: SystemProgram.programId,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+      })
+      .signers([maker])
+      .rpc();
+
+      console.log("✅ Your Refund transaction signature", tx);
+  })
 });
+
+
+async function airdrop(connection, address: PublicKey, amount: number) {
+  let airdrop_signature = await connection.requestAirdrop(
+    address,
+    amount * LAMPORTS_PER_SOL
+  );
+  console.log("✍🏾 Airdrop Signature: ", airdrop_signature);
+
+  let confirmedAirdrop = await confirmTransaction(connection, airdrop_signature, "confirmed");
+
+  console.log(`🪂 Airdropped ${amount} SOL to ${address.toBase58()}`);
+  console.log("✅ Tx Signature: ", confirmedAirdrop);
+
+  return confirmedAirdrop;
+}
+
+async function getBalance(connection: anchor.web3.Connection, address: PublicKey) {
+  let accountInfo = await connection.getAccountInfo(address);
+
+  return accountInfo.lamports;
+}

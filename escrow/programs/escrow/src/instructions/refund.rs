@@ -28,7 +28,7 @@ pub struct Refund<'info> {
         mut,
         close = maker,
         has_one = maker,
-        seeds = [b"escrow", maker.key.as_ref(), escrow.seed.to_le_bytes().as_ref() ],
+        seeds = [b"escrow", maker.key.as_ref()], // escrow.seed.to_le_bytes().as_ref() 
         bump = escrow.bump,
     )]
     pub escrow: Account<'info, EscrowState>,
