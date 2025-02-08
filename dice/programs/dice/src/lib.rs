@@ -1,13 +1,14 @@
 use anchor_lang::prelude::*;
 
-pub mod error;
 pub mod state;
 pub mod contexts;
+pub mod error;
 
-declare_id!("EJq6mSWxKgnQFP9NBQzJ6Ngk3bK7CC66oGAwCG3wAvrN");
+
+declare_id!("DarLrGUYijwGz7M7R21NYSgf884STqWaedunKuL6AhtA");
 
 #[program]
-pub mod staking {
+pub mod dice {
     use super::*;
 
     pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
@@ -15,6 +16,3 @@ pub mod staking {
         Ok(())
     }
 }
-
-#[derive(Accounts)]
-pub struct Initialize {}

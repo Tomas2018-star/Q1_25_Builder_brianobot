@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 
 #[account]
-#[derive(InitSpace)]
+#[derive(InitSpace, Debug)]
 pub struct EscrowState {
     pub seed: u64, // seeds used to derive the escrow PDA
     pub maker: Pubkey, // the maker of the escrow
