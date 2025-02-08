@@ -104,6 +104,10 @@ impl<'info> Deposit<'info> {
         require!(max_x >= x, AmmError::InsufficientTokenX);
         require!(max_y >= y, AmmError::InsufficientTokenY);
 
+        self.deposit_token(true, x)?;
+        self.deposit_token(false, y)?;
+        self.mint_lp_tokens(lp_amount)?;
+
         Ok(())
     }
 

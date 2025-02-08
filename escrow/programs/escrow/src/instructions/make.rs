@@ -55,6 +55,12 @@ impl<'info> Make<'info> {
             receive_amount,
             bump: bumps.escrow,
         });
+        msg!("Escrow Account: {:?}", self.escrow);
+        msg!("Vault Account: {:?}", self.escrow);
+        msg!("Maker Account: {:?}", self.maker);
+        msg!("Mint A Account: {:?}", self.mint_a);
+        msg!("Mint B Account: {:?}", self.mint_b);
+        msg!("Maker Ata A Account: {:?}", self.maker_ata_a);
         Ok(())
     }
 

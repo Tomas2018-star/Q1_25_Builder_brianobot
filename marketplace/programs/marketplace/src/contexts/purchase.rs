@@ -4,7 +4,7 @@ use anchor_spl::{associated_token::AssociatedToken, token::{close_account, mint_
 
 use crate::state::{Listing, Marketplace};
 
-// reward the makret and/or the taker for their participation in the marketplace
+// reward the maker and/or the taker for their participation in the marketplace
 // use the reward token mint as a reward
 
 #[derive(Accounts)]

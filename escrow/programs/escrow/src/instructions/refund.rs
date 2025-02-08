@@ -28,7 +28,7 @@ pub struct Refund<'info> {
         mut,
         close = maker,
         has_one = maker,
-        seeds = [b"escrow", maker.key.as_ref()], // escrow.seed.to_le_bytes().as_ref() 
+        seeds = [b"escrow", maker.key().as_ref()], // escrow.seed.to_le_bytes().as_ref() 
         bump = escrow.bump,
     )]
     pub escrow: Account<'info, EscrowState>,
@@ -51,13 +51,21 @@ impl<'info> Refund<'info> {
         // use the TransferChecked struct to transfer tokens from the maker ATA to the escrow vault
         // not the Usual Transfer Struct we use for normal SOL transfer
         let cpi_accounts = TransferChecked {
-            to: self.maker_ata_a.to_account_info(),
-            mint: self.mint_a.to_account_info(),
             from: self.vault.to_account_info(),
-            authority: self.maker.to_account_info(),
+            mint: self.mint_a.to_account_info(),
+            to: self.maker_ata_a.to_account_info(),
+            authority: self.escrow.to_account_info(), // since the escrow account owns the from account (vault account)
         };
 
-        let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
+        let seeds = [
+            b"escrow", 
+            self.maker.to_account_info().key.as_ref(),
+            &[self.escrow.bump],
+        ];
+
+        let signer_seeds = &[&seeds[..]];
+
+        let cpi_ctx = CpiContext::new_with_signer(cpi_program, cpi_accounts, signer_seeds);
 
         // transfer the tokens
         // use amount when you want to get the amount of token a token account holds
