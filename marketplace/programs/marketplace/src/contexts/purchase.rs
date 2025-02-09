@@ -13,6 +13,7 @@ pub struct Purchase<'info> {
     pub taker: Signer<'info>,
     #[account(mut)]
     pub maker: SystemAccount<'info>,
+    // this is the maker nft mint
     pub maker_mint: InterfaceAccount<'info, Mint>,
     #[account(
         seeds = [b"marketplace", marketplace.name.as_str().as_bytes()],
@@ -25,30 +26,37 @@ pub struct Purchase<'info> {
         associated_token::mint = maker_mint,
         associated_token::authority = taker,
     )]
+    // this is the Token account to hold the token to be purchased from maker
     pub taker_ata: InterfaceAccount<'info, TokenAccount>,
     #[account(
         mut,
         associated_token::mint = maker_mint,
         associated_token::authority = listing,
     )]
+    // this is the account that stores the token and would release the token the taker once payment is comfirmed
+    // the vault is Associated Token Account
     pub vault: InterfaceAccount<'info, TokenAccount>,
     #[account(
         mut,
-        close = maker, 
+        close = maker,  // the presence of the close constraint does not automatically mean the account would be close
+        // but it helps to signal to the logic that this account might be closed and the recepient must be available
+        // to receive the rent for the closed account
         seeds = [marketplace.key().as_ref(), maker_mint.key().as_ref()],
-        bump = listing.bump,
+        bump = listing.bump, // always store the bump and use it to save compute unit
     )]
+    // the listing account is a PDA owned by my program
     pub listing: Account<'info, Listing>,
     #[account(
         mut,
         seeds = [b"treasury", marketplace.key().as_ref()],
         bump = marketplace.treasury_bump
     )]
+    // this is the account that would
     pub treasury: SystemAccount<'info>,
     #[account(
         seeds = [b"rewards", marketplace.key().as_ref()],
         bump = marketplace.rewards_mint_bump,
-        mint::authority = marketplace,
+        mint::authority = marketplace, 
         mint::decimals = 6,
     )]
     pub rewards_mint: InterfaceAccount<'info, Mint>,

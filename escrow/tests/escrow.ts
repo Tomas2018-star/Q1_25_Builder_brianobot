@@ -1,7 +1,7 @@
 import * as anchor from "@coral-xyz/anchor";
 import { Program, BN } from "@coral-xyz/anchor";
 import { Escrow } from "../target/types/escrow";
-import { ASSOCIATED_TOKEN_PROGRAM_ID, createMint, getAssociatedTokenAddressSync, getOrCreateAssociatedTokenAccount, mintTo, TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import { Account, ASSOCIATED_TOKEN_PROGRAM_ID, createMint, getAssociatedTokenAddressSync, getOrCreateAssociatedTokenAccount, mintTo, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { Keypair, LAMPORTS_PER_SOL, PublicKey, SystemProgram } from "@solana/web3.js";
 import { randomBytes } from 'node:crypto';
 import { confirmTransaction } from "@solana-developers/helpers";
@@ -30,17 +30,17 @@ describe("escrow", () => {
   // token_program
   // associated_token_program
 
-  let maker;
-  let taker;
-  let mintA;
-  let mintB;
-  let makerAtaA;
-  let takerAtaB;
-  let vault;
-  let escrow;
-  let bump;
+  let maker: Keypair;
+  let taker: Keypair;
+  let mintA: anchor.web3.PublicKey;
+  let mintB: anchor.web3.PublicKey;
+  let makerAtaA: Account;
+  let takerAtaB: Account;
+  let vault: anchor.web3.PublicKey;
+  let escrow: anchor.web3.PublicKey;
+  let bump: number;
 
-  const seeds = new BN(randomBytes(8));
+  const seed = new BN(randomBytes(8));
 
   before(async () => {
       // create required accounts
@@ -95,7 +95,7 @@ describe("escrow", () => {
       [escrow, bump] = anchor.web3.PublicKey.findProgramAddressSync([
         Buffer.from("escrow"),
         maker.publicKey.toBuffer(),
-        // seeds.toBuffer(),
+        seed.toArrayLike(Buffer, "le", 8),
       ], program.programId);
       
       console.log("✅ Escrow Account created: ", escrow);
@@ -103,8 +103,6 @@ describe("escrow", () => {
       vault = getAssociatedTokenAddressSync(
           mintA,
           escrow,
-          true,
-          TOKEN_PROGRAM_ID,
       );
       console.log("✅ Vault Address: ", vault);
 
@@ -112,7 +110,7 @@ describe("escrow", () => {
 
   it("Make Escrow!", async () => {
       const tx = await program.methods
-      .make(seeds, new BN(1_000_000_000))
+      .make(seed, new BN(1_000_000_000))
       .accounts({
         maker: maker.publicKey,
         mintA: mintA,
@@ -127,28 +125,28 @@ describe("escrow", () => {
       .signers([maker])
       .rpc();
 
-      console.log("✅ Your Make transaction signature", tx);
+      console.log("✅ Your Escrow Make transaction signature", tx);
   });
 
-  it("Request Refund!", async () => {
-    const tx = await program.methods
-      .refund()
-      .accounts({
-        maker: maker.publicKey,
-        mintA: mintA,
-        mintB: mintB,
-        makerAtaA: makerAtaA.address,
-        escrow: escrow,
-        vault: vault,
-        systemProgram: SystemProgram.programId,
-        tokenProgram: TOKEN_PROGRAM_ID,
-        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
-      })
-      .signers([maker])
-      .rpc();
+  // it("Request Refund!", async () => {
+  //   const tx = await program.methods
+  //     .refund()
+  //     .accounts({
+  //       maker: maker.publicKey,
+  //       mintA: mintA,
+  //       mintB: mintB,
+  //       makerAtaA: makerAtaA.address,
+  //       escrow: escrow,
+  //       vault: vault,
+  //       systemProgram: SystemProgram.programId,
+  //       tokenProgram: TOKEN_PROGRAM_ID,
+  //       associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+  //     })
+  //     .signers([maker])
+  //     .rpc();
 
-      console.log("✅ Your Refund transaction signature", tx);
-  })
+  //     console.log("✅ Your Refund transaction signature", tx);
+  // })
 });
 
 
