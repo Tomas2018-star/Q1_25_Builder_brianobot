@@ -59,7 +59,7 @@ impl<'info> Refund<'info> {
 
         let seeds = [
             b"escrow", 
-            self.maker.to_account_info().key.as_ref(),
+            self.maker.key.as_ref(),
             &[self.escrow.bump],
         ];
 

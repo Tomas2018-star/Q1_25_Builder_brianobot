@@ -10,3 +10,8 @@ In Order to operate the Marketplace, the users are incentivise with reward token
 - treasury_bump: 
 - reward_mint_bump
 - name:
+
+
+## Note
+- There are some RPC methods you can use to get certain accounts
+  - You can fetch all Accounts owned by your accounts

@@ -28,11 +28,15 @@ pub struct Make<'info> {
         init, 
         payer = maker,
         space = 8 + EscrowState::INIT_SPACE,
-        seeds = [b"escrow", maker.key().as_ref()], // seeds.to_le_bytes().as_ref()
+        // every seed in the seeds array must be a byte slice
+        // &[u8], so integers are converted to bytes by using to_le_bytes()
+        // to_le_bytes() returns a byte version of the seed and as_ref() returns a reference to that byte which
+        // together is a byte slice
+        seeds = [b"escrow", maker.key().as_ref(), seeds.to_le_bytes().as_ref()], // 
         bump,
     )]
     pub escrow: Account<'info, EscrowState>,
-    #[account(
+    #[account( // notice how TokenAccount init does not require space constraint
         init,
         payer = maker,
         associated_token::mint = mint_a,
@@ -55,12 +59,6 @@ impl<'info> Make<'info> {
             receive_amount,
             bump: bumps.escrow,
         });
-        msg!("Escrow Account: {:?}", self.escrow);
-        msg!("Vault Account: {:?}", self.escrow);
-        msg!("Maker Account: {:?}", self.maker);
-        msg!("Mint A Account: {:?}", self.mint_a);
-        msg!("Mint B Account: {:?}", self.mint_b);
-        msg!("Maker Ata A Account: {:?}", self.maker_ata_a);
         Ok(())
     }
 
