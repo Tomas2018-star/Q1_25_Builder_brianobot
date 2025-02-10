@@ -82,7 +82,10 @@ impl<'info> Purchase<'info> {
         let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
 
         // 
-        let fee = self.marketplace.fee as u64;
+        let fee = self.marketplace.fee as u64; // this is because the price 
+        // which would be needed to the calculate the payment amount is in u64 
+
+        // this is the safe way to handle over/underflow in solana programs
         let amount = self.listing.price.checked_sub(fee).unwrap();
 
         transfer(cpi_ctx, amount)?;
@@ -103,7 +106,7 @@ impl<'info> Purchase<'info> {
     }
 
     // transfer the nft
-    pub fn transfer(&mut self) -> Result<()> {
+    pub fn transfer_nft(&mut self) -> Result<()> {
         let cpi_program = self.token_program.to_account_info();
 
         let cpi_accounts = TransferChecked {
@@ -114,6 +117,7 @@ impl<'info> Purchase<'info> {
         };
 
         // here the seeds match that of the authority in the cpi accounts TransferChecked
+        // TODO: still have issues wrapping my head around the seeds when used with signer_seeds process
         let seeds = [
             &self.marketplace.key().to_bytes()[..], 
             &self.maker_mint.key().to_bytes()[..],
@@ -125,6 +129,7 @@ impl<'info> Purchase<'info> {
         let cpi_ctx = CpiContext::new_with_signer(cpi_program, cpi_accounts, signer_seeds);
 
         transfer_checked(cpi_ctx, 1, 0);
+
 
         Ok(())
     }
@@ -152,6 +157,8 @@ impl<'info> Purchase<'info> {
         );
 
         close_account(cpi_ctx)?;
+
+        // self.listing.close(self.maker.to_account_info())?;
         
         Ok(())
     }
