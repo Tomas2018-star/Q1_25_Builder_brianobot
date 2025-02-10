@@ -68,7 +68,7 @@ pub struct Purchase<'info> {
 
 impl<'info> Purchase<'info> {
     // send sol
-    // transfering price from taker to the maker
+    // transfering price amount (with fee deducted from it) from taker to the maker
     // take part of the price as fee
     pub fn pay(&mut self) -> Result<()> {
         // pay the maker 
@@ -174,8 +174,8 @@ impl<'info> Purchase<'info> {
         };
 
         let seeds = &[
-            "marketplace".as_bytes(), 
-            self.marketplace.name.as_str().as_bytes(),
+            b"marketplace", 
+            &self.marketplace.name.as_str().as_bytes()[..],
             &[self.marketplace.bump]
         ];
 
