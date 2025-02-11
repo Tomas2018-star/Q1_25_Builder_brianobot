@@ -14,7 +14,7 @@ pub struct Stake<'info> {
     #[account(
         mut,
         associated_token::mint = nft_mint,
-        associated_token::authority = 
+        associated_token::authority = user,
     )]
     pub nft_mint_ata: Account<'info, TokenAccount>,
     pub collection_mint: Account<'info, Mint>,
@@ -30,7 +30,7 @@ pub struct Stake<'info> {
         init,
         payer = user,
         space = StakeAccountState::INIT_SPACE + 8,
-        seeds = [b"stake_account", nft_mint.key().as_ref(), config.key().as_ref()]
+        seeds = [b"stake_account", nft_mint.key().as_ref(), config.key().as_ref()],
         bump,
     )]
     pub stake_account: Account<'info, StakeAccountState>,
@@ -42,9 +42,9 @@ pub struct Stake<'info> {
 
 impl<'info> Stake<'info> {
     pub fn stake(&mut self, points: u32, amount_staked: u8, bumps: &StakeBumps) -> Result<()> {
-        require!(self.user_account.amount_staked > self.config.max_stake, StakeError::MaxStakeReached);
+        require!(self.user.amount_staked > self.config.max_stake, StakeError::MaxStakeReached);
 
-        // self.stake_account
+        // self.stake_account 
 
         let clock = Clock::get()?;
 
