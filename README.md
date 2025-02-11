@@ -6,10 +6,13 @@ This is a comprehensive reference to the codes i wrote and edited while learning
 - [airdrop](/airdrop/): Contain typescript code written and edited for the pre-requisite task
 - [amm-program](/amm-program): Contains Anchor program for an Automated Market Maker Smart Contract
 - [crowd_fund_arch_diagram](/crowd_fund_arch_diagram): Contains Architectural Diagram for my Capstone project
+- [crowdfi](/crowdfi/): My Capstone Project
+- [dice](/dice/): Contains Anchor program for a Dice Game
 - [escrow](/escrow/): Contains Anchor program for an Escrow Smart Contract
 - [marketplace](/marketplace/): Contains Anchor program for NFT Marketplace Smart Contract
 - [pre_req_task_rust](/pre_req_task_rust/): Contains rust codes written and edited for the second pre-requisite task
 - [solana-starter](/solana-starter/): Contains SPL relateds edited during the first class
+- [staking](/staking/): Contains Anchor program for a Token Staking Protocol
 - [vault](/vault): Contains Anchor program code for a vault program
 - [Capstone_Letter_of_Intent(LOI).pdf](https://docs.google.com/document/d/1e5ZDsHkfKfeBpUr5ikHsVyoQU9KRSfUrk_yVYZ-yrsA/edit?usp=sharing): Capstone Letter of Intent for the Turbin3 2025 Q1 Builders Cohort
 
