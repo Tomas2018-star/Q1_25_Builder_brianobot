@@ -4,8 +4,9 @@ This is a comprehensive reference to the codes i wrote and edited while learning
 
 ## 🗂️ Content/Folders
 - [airdrop](/airdrop/): Contain typescript code written and edited for the pre-requisite task
-- [escrow](/escrow/): Contains Anchor program for an Escrow Smart Contract
 - [amm-program](/amm-program): Contains Anchor program for an Automated Market Maker Smart Contract
+- [crowd_fund_arch_diagram](/crowd_fund_arch_diagram): Contains Architectural Diagram for my Capstone project
+- [escrow](/escrow/): Contains Anchor program for an Escrow Smart Contract
 - [marketplace](/marketplace/): Contains Anchor program for NFT Marketplace Smart Contract
 - [pre_req_task_rust](/pre_req_task_rust/): Contains rust codes written and edited for the second pre-requisite task
 - [solana-starter](/solana-starter/): Contains SPL relateds edited during the first class
