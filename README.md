@@ -111,7 +111,11 @@ you can use the ```require!``` macro to simplify returning errors
 
 ## 🤝 Contribution
 While using this material as a reference material for your studies or research, if you do see the need to contribute to the 
-content of this repository, please you are welcome to do so, Fork the [base repository](https://github.com/brianobot/TURBIN3-Q1-25) which is the actively maintained version of this repository and then create a pull request.
+content of this repository, please you are welcome to do so, 
+
+- Fork the [base repository](https://github.com/brianobot/TURBIN3-Q1-25) which is the actively maintained version of this repository
+- Create a branch for your changes.
+- Submit a Pull Request for review
 
 
 ## 👨🏽‍🔧 Maintainer
