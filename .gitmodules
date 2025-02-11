@@ -4,3 +4,6 @@
 [submodule "crowdi"]
 	path = crowdi
 	url = git@github.com:brianobot/crowdfi.git
+[submodule "crowdfi"]
+	path = crowdfi
+	url = git@github.com:brianobot/crowdfi.git
