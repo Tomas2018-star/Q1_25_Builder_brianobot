@@ -34,10 +34,11 @@ pub mod marketplace {
     }
 
     pub fn purchase(ctx: Context<Purchase>) -> Result<()> {
-        ctx.accounts.pay()?;
+        ctx.accounts.pay()?; 
         ctx.accounts.transfer_nft()?;
         ctx.accounts.close_vault_account()?;
         ctx.accounts.reward_buyer()?;
-        Ok(())
+        Ok(()) // i am assuming this is the end you are referring to??
+
     }
 }
