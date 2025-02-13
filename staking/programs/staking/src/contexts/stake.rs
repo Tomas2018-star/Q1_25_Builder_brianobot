@@ -44,14 +44,15 @@ pub struct Stake<'info> {
             b"metadata",
             nft_mint.key().as_ref(),
             metadata_program.key().as_ref(),
-        ],
+        ], // the seeds for the metadataAccount is predefined 
         bump,
         // TODO: change the line below to metadata_program and see it the test still works
-        seeds::program = metadata_program.key(), // this tells anchor the use the metadata_program key to derive the address
         // instead of the defaul Crate::ID which is our program id
-        constraint = metadata.collection.as_ref().unwrap().key().as_ref() == collection_mint.key().as_ref(),
+        seeds::program = metadata_program.key(), // this tells anchor the use the metadata_program key to derive the address
+        // TODO: look into the collection verification constraint more and deeply
+        constraint = metadata.collection.as_ref().unwrap().key.as_ref() == collection_mint.key().as_ref(),
         constraint = metadata.collection.as_ref().unwrap().verified == true
-    )] // the seeds for the metadataAccount is predefined 
+    )] 
     pub metadata: Account<'info, MetadataAccount>, // TODO: why do we need this
 
     #[account(
