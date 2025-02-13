@@ -1,6 +1,6 @@
 # Brian's Turbin3 Q1 2025 Codebase 🦇
 
-This is a comprehensive reference to the codes i wrote and edited while learning in the Solana Turbin3 Program.
+This is a comprehensive reference to the codes I wrote and edited while learning in the Solana Turbin3 Program (Builder Cohort).
 
 ## 🗂️ Content/Folders
 - [airdrop](/airdrop/): Contain typescript code written and edited for the pre-requisite task
@@ -10,6 +10,7 @@ This is a comprehensive reference to the codes i wrote and edited while learning
 - [dice](/dice/): Contains Anchor program for a Dice Game
 - [escrow](/escrow/): Contains Anchor program for an Escrow Smart Contract
 - [marketplace](/marketplace/): Contains Anchor program for NFT Marketplace Smart Contract
+- [metaplex_core_learning](/metaplex_core_learning/): Contains THings to learn about the Metaplex Core 
 - [pre_req_task_rust](/pre_req_task_rust/): Contains rust codes written and edited for the second pre-requisite task
 - [solana-starter](/solana-starter/): Contains SPL relateds edited during the first class
 - [staking](/staking/): Contains Anchor program for a Token Staking Protocol
@@ -50,6 +51,8 @@ This is a comprehensive reference to the codes i wrote and edited while learning
   ```
 - Whenever you add ```anchor-spl``` as a dependenc for a program, also add the ```idl-build``` for it in the features section of the 
 Cargo.toml file
+- CPI calls cost money!
+- As the Amount of CU decreases the chances of getting to the block increases
 
 ## Anchor CPIs and Errors
 - anchor cpi feature generates CPI helper functions for invoking instructions on existign anchor program
