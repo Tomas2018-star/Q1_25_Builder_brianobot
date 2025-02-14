@@ -22,6 +22,11 @@ pub mod amm_program {
         Ok(())
     }
 
+    pub fn withdraw(ctx: Context<Withdraw>, lp_amount: u64, min_x: u64, min_y: u64) -> Result<()> {
+        ctx.accounts.withdraw(lp_amount, min_x, min_y)?;
+        Ok(())
+    }
+
     pub fn swap(ctx: Context<Swap>, args: SwapArgs) -> Result<()> {
         ctx.accounts.swap(args)?;
         Ok(())
