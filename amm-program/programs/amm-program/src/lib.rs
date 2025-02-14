@@ -21,4 +21,9 @@ pub mod amm_program {
         ctx.accounts.deposit(lp_amount, max_x, max_y)?;
         Ok(())
     }
+
+    pub fn swap(ctx: Context<Swap>, args: SwapArgs) -> Result<()> {
+        ctx.accounts.swap(args)?;
+        Ok(())
+    }
 }
