@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 use anchor_spl::{associated_token::AssociatedToken, mint, token::{transfer_checked, TransferChecked}, token_interface::{Mint, TokenAccount, TokenInterface}};
-use constant_product_curve::{ConstantProduct, LiquidityPair};
+use constant_product_curve::{ConstantProduct, LiquidityPair, SwapResult};
 
 use crate::state::Config;
 use crate::error::AmmError;
@@ -87,17 +87,23 @@ impl<'info> Swap<'info> {
 
         require_neq!(res.deposit, 0, AmmError::InvalidAmount);
         require_neq!(res.withdraw, 0, AmmError::InvalidAmount);
+
+        let res2 = SwapResult {
+            deposit: res.deposit.clone(),
+            withdraw: res.withdraw.clone(),
+            fee: res.fee.clone(),
+        };
         
         // Transfer to Vault
-        self.transfer_to_vault()?;
+        self.transfer_to_vault(args.clone(), res)?;
         
         // Transfer The Receiving Token from Vault to the Usee Ata
-        self.withdraw_from_vault()?;
+        self.withdraw_from_vault(args, res2)?;
 
         Ok(())
     }
 
-    fn transfer_to_vault(&mut self) -> Result<()> {
+    fn transfer_to_vault(&mut self, args: SwapArgs, res: SwapResult) -> Result<()> {
         let cpi_program = self.token_program.to_account_info();
 
         let (cpi_accounts, mint_decimaks) = match args.is_x {
@@ -122,7 +128,7 @@ impl<'info> Swap<'info> {
         Ok(())
     }
 
-    fn withdraw_from_vault(&mut self) -> Result<()> {
+    fn withdraw_from_vault(&mut self, args: SwapArgs, res: SwapResult) -> Result<()> {
         let cpi_program = self.token_program.to_account_info();
 
         let (cpi_accounts, mint_decimals) = match args.is_x {
