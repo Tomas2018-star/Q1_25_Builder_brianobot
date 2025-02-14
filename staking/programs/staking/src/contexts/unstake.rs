@@ -2,15 +2,14 @@ use anchor_lang::prelude::*;
 use anchor_spl::{
     metadata::{
         mpl_token_metadata::instructions::{
-            FreezeDelegatedAccountCpi, FreezeDelegatedAccountCpiAccounts,
+            ThawDelegatedAccountCpi, ThawDelegatedAccountCpiAccounts,
         },
         MasterEditionAccount, Metadata, MetadataAccount
     },
-    token::{approve, Approve, Mint, Token, TokenAccount},
+    token::{Revoke, revoke, Mint, Token, TokenAccount},
 };
 
 use crate::state::{UserAccountState, StakeAccountState, StakeConfig};
-use crate::error::StakeError;
 
 /*
     One Majoy difference between staking and nft marketplace is that the nft is not transferred from the owners (holder's)
@@ -19,7 +18,7 @@ use crate::error::StakeError;
 */
 
 #[derive(Accounts)]
-pub struct Stake<'info> {
+pub struct Unstake<'info> {
     #[account(mut)]
     pub user: Signer<'info>,
     // this is needed because we need to know the nft the user is staking in the first place
@@ -84,12 +83,11 @@ pub struct Stake<'info> {
     pub user_account: Account<'info, UserAccountState>,
 
     #[account(
-        init,
-        payer = user,
-        space = StakeAccountState::INIT_SPACE + 8,
+        mut,
+        close = user,
         // here the config key seeds is not strictly needed
         seeds = [b"stake_account", nft_mint.key().as_ref(), config.key().as_ref()],
-        bump,
+        bump = stake_account.bump,
     )]
     pub stake_account: Account<'info, StakeAccountState>,
 
@@ -98,51 +96,20 @@ pub struct Stake<'info> {
     pub token_program: Program<'info, Token>,
 }
 
-impl<'info> Stake<'info> {
-    pub fn stake(&mut self, bumps: &StakeBumps) -> Result<()> {
-        // this ensures that the user has not gone over the max staked
-        require!(self.user_account.amount_staked < self.config.max_stake, StakeError::MaxStakeReached);
+impl<'info> Unstake<'info> {
+    pub fn unstake(&mut self) -> Result<()> {
+        self.user_account.amount_staked -= 1;
 
-        self.user_account.amount_staked += 1;
+        let cpi_program = self.metadata_program.to_account_info();
 
-        // this is a sysvar, 
-        let clock = Clock::get()?;
-
-        self.stake_account.set_inner( StakeAccountState {
-            owner: self.user.key(),
-            nft_mint: self.nft_mint.key(),
-            staked_at: clock.unix_timestamp,
-            bump: bumps.stake_account,
-        });
-
-        let cpi_program = self.token_program.to_account_info();
-
-        // STUDY: Read on the Approve Account struct and when to use it
-        // this allows another authority to manage your token
-        let cpi_accounts = Approve {
-            to: self.nft_mint_ata.to_account_info(),
-            delegate: self.stake_account.to_account_info(),
-            authority: self.user.to_account_info(),
-        };
-
-        let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
-
-        approve(cpi_ctx, 1)?; // Amount for NFT is always one
-        
-        // yayyy at this point in the process, you get authority over the token (NFT)
-
-        // here we want to freeze the nft
-        let cpi_program = &self.metadata_program.to_account_info();
-        // TODO: why is the metadata_program needed to freeze an token 
-
-        let cpi_accounts = FreezeDelegatedAccountCpiAccounts {
+        let cpi_accounts = ThawDelegatedAccountCpiAccounts {
             delegate: &self.stake_account.to_account_info(),
             token_account: &self.nft_mint_ata.to_account_info(),
             edition: &self.edition.to_account_info(),
             mint: &self.nft_mint.to_account_info(),
             token_program: &self.token_program.to_account_info(),
         };
- 
+
         let seeds = [ 
             b"stake_account",
             self.nft_mint.to_account_info().key.as_ref(),
@@ -151,14 +118,24 @@ impl<'info> Stake<'info> {
         ];
 
         let signer_seeds = &[&seeds[..]];
-        
-        // why is this different from the other CPI calls
-        FreezeDelegatedAccountCpi::new(
-            cpi_program,
-            cpi_accounts,
+
+        ThawDelegatedAccountCpi::new(
+            &cpi_program,
+            cpi_accounts
         ).invoke_signed(signer_seeds)?;
+
+        // Revoke the Delegated Auth Over the Token Account Holding the NFT
+        let cpi_program = self.token_program.to_account_info();
+
+        let cpi_accounts = Revoke {
+            source: self.nft_mint_ata.to_account_info(),
+            authority: self.user.to_account_info(),
+        };
+
+        let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
+
+        revoke(cpi_ctx)?;
 
         Ok(())
     }
-
 }
