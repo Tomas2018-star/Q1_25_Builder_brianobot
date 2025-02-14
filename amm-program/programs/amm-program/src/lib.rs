@@ -17,8 +17,8 @@ pub mod amm_program {
         Ok(())
     }
 
-    pub fn deposit(ctx: Context<Deposit>, amount: u64) -> Result<()> {
-        // ctx.accounts.deposit_token(is_x, amount)?;
+    pub fn deposit(ctx: Context<Deposit>, lp_amount: u64, max_x: u64, max_y: u64) -> Result<()> {
+        ctx.accounts.deposit(lp_amount, max_x, max_y)?;
         Ok(())
     }
 }
