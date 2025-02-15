@@ -14,7 +14,6 @@ use crate::state::{UserAccountState, StakeAccountState, StakeConfig};
 /*
     One Majoy difference between staking and nft marketplace is that the nft is not transferred from the owners (holder's)
     wallet, but while it is staked, it can not be transferred from the wallet of the holder
-
 */
 
 #[derive(Accounts)]
