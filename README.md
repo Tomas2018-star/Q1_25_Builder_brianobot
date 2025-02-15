@@ -43,6 +43,8 @@ This is a comprehensive reference to the codes I wrote and edited while learning
 -
 
 ## Other Random Stuffs
+- When using the ```close``` constraint in the Account struct, the account passed to the close
+constraint MUST be the signer of the instruction
 - Everything above u32, can not be represented correctly in JS number and therefore we must use BN to represent Big Numbers
   ```js
   import { BN } from "bn.js";
