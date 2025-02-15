@@ -22,7 +22,15 @@ pub struct Swap<'info> {
         bump = config.config_bump,
     )]
     pub config: Account<'info, Config>,   
-
+    #[account(
+        seeds = [b"lp", config.key().as_ref()],
+        bump = config.lp_bump,
+        mint::decimals = 6, // ensures that the mint account provided here matches the same one initialized in the init step
+        mint::authority = config // ensures that the authority of the mint account is the config
+    )]
+    // mint::authority maps to the mint_authority field in the Mint struct. Anchor uses mint::authority = config as a 
+    // more readable and intuitive way to enforce mint_lp.mint_authority == Some(config.key())
+    pub mint_lp: InterfaceAccount<'info, Mint>, // the mint account of the mint to be used to mint tokens for the user for 
     // #[account(address = config.mint_x)] # this is not neccessary since we use the has_one check on the config
     pub mint_x: InterfaceAccount<'info, Mint>, // one part of the pair to be used for the exchange
     // #[account(address = config.mint_y)] # this is not neccessary since we use the has_one check on the config
@@ -69,12 +77,13 @@ pub struct SwapArgs {
 impl<'info> Swap<'info> {
     pub fn swap(&mut self, args: SwapArgs) -> Result<()> {
         require!(args.amount > 0, AmmError::InvalidAmount);
+        require!(self.config.locked == false, AmmError::AMMLocked);
 
         let mut curve = ConstantProduct::init(
-            self.vault_x.amount,
-            self.vault_y.amount,
-            self.vault_x.amount,
-            self.config.fee,
+            self.vault_x.amount, // number of token x
+            self.vault_y.amount, // number of token y
+            self.mint_lp.supply, // number of lp token
+            self.config.fee, 
             None,
         ).unwrap();
 
@@ -83,7 +92,7 @@ impl<'info> Swap<'info> {
             false => LiquidityPair::Y,
         };
 
-        let res = curve.swap(p, args.amount, args.min).unwrap();
+        let res = curve.swap(p, args.amount, args.min).map_err(AmmError::from)?;
 
         require_neq!(res.deposit, 0, AmmError::InvalidAmount);
         require_neq!(res.withdraw, 0, AmmError::InvalidAmount);
@@ -137,14 +146,14 @@ impl<'info> Swap<'info> {
                 mint: self.mint_y.to_account_info(),
                 to: self.user_ata_y.to_account_info(),
                 authority: self.config.to_account_info(),
-            }, self.mint_x.decimals),
+            }, self.mint_y.decimals),
 
             false => (TransferChecked {
                 from: self.vault_x.to_account_info(),
                 mint: self.mint_x.to_account_info(),
                 to: self.user_ata_x.to_account_info(),
                 authority: self.config.to_account_info(),
-            }, self.mint_y.decimals),
+            }, self.mint_x.decimals),
         };
 
 
