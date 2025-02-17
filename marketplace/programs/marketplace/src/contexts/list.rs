@@ -53,7 +53,7 @@ pub struct List<'info> {
         constraint = metadata.collection.as_ref().unwrap().verified == true @MarketplaceError::UnverifedCollection,
     )]
     // this is the Metadata Account of the NFT
-    pub metadata: Account<'info, MetadataAccount>,
+    pub metadata: Account<'info, m>,
     #[account(
         seeds = [
             b"metadata",
