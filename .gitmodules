@@ -1,9 +1,6 @@
 [submodule "crowd_fund_arch_diagram"]
 	path = crowd_fund_arch_diagram
 	url = git@github.com:brianobot/crowd_fund_arch_diagram.git
-[submodule "crowdi"]
-	path = crowdi
-	url = git@github.com:brianobot/crowdfi.git
 [submodule "crowdfi"]
 	path = crowdfi
 	url = git@github.com:brianobot/crowdfi.git
