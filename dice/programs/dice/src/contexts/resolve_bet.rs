@@ -1,5 +1,9 @@
 use anchor_lang::prelude::*;
 
+use solana_program::{
+    ed25519_program, hash::hash, sysvar::instructions::load_instruction_at_checked,  
+};
+
 use crate::state::Bet;
 use crate::error::DiceError;
 
@@ -18,16 +22,17 @@ pub struct ResolveBet<'info> {
     pub vault: SystemAccount<'info>,
     #[account(
         mut,
-        close_player = player,
+        close = player,
         seeds = [b"bet", vault.key().as_ref(), bet.seed.to_le_bytes().as_ref()],
         bump,
     )]
-    pub bet: Account<'info, Bet>,
-    #[account(
+    pub bet: Account<'info,  Bet>,
+    #[account( 
         address = solana_program::sysvar::instructions::ID
     )]
     /// CHECK: this is the instructions sysvar acccount
     pub instructions_sysvar: AccountInfo<'info>,
+    // this sysvar allows for instruction introspection
     pub system_program: Program<'info, System>,
 }
 
