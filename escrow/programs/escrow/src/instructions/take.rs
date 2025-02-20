@@ -14,9 +14,9 @@ pub struct Take<'info> {
     pub maker: SystemAccount<'info>,
     #[account(address = escrow.mint_a)] // this constaints prevent abuse of the mint as was provided during the escrow creation process
     // we would need the mint again here since
-    pub mint_a: InterfaceAccount<'info, Mint>,
+    pub mint_a: Box<InterfaceAccount<'info, Mint>>,
     #[account(address = escrow.mint_b)] // this constaints prevent abuse of the mint as was provided during the escrow creation process
-    pub mint_b: InterfaceAccount<'info, Mint>, 
+    pub mint_b: Box<InterfaceAccount<'info, Mint>>, 
     #[account(
         init_if_needed,
         payer = taker,
@@ -24,14 +24,14 @@ pub struct Take<'info> {
         associated_token::authority = taker,
     )]
     // this is needed to store the tokens that would be received from 
-    pub taker_ata_a: InterfaceAccount<'info, TokenAccount>,
+    pub taker_ata_a: Box<InterfaceAccount<'info, TokenAccount>>,
     #[account(
         mut,  // this is expected to already exist for the taker since they must own those tokens
         associated_token::mint = mint_b, // ? how does this access works associated_token::mint = mint_a
         associated_token::authority = taker,
     )]
     // this is needed to store the tokens that would be give in the escrow from the take
-    pub taker_ata_b: InterfaceAccount<'info, TokenAccount>,
+    pub taker_ata_b: Box<InterfaceAccount<'info, TokenAccount>>,
     #[account(
         init_if_needed,
         payer = taker,
@@ -41,7 +41,7 @@ pub struct Take<'info> {
         associated_token::authority = maker ,// we can not use escrow.maker, // difference between account and public keys as used in different part of anchor
     
     )] 
-    pub maker_ata_b: InterfaceAccount<'info, TokenAccount>, 
+    pub maker_ata_b: Box<InterfaceAccount<'info, TokenAccount>>, 
     #[account(
         mut,
         close = taker, 
@@ -52,7 +52,7 @@ pub struct Take<'info> {
         seeds = [b"escrow", escrow.maker.as_ref(), escrow.seed.to_le_bytes().as_ref()],
         bump = escrow.bump,
     )]
-    pub escrow: Account<'info, EscrowState>,
+    pub escrow: Box<Account<'info, EscrowState>>,
     #[account(
         mut,
         associated_token::mint = mint_a, // the constraint here applies to associated_token
@@ -60,7 +60,7 @@ pub struct Take<'info> {
         associated_token::authority = escrow,
         // vault.authority == escrow
     )]
-    pub vault: InterfaceAccount<'info, TokenAccount>,
+    pub vault: Box<InterfaceAccount<'info, TokenAccount>>,
     pub token_program: Interface<'info, TokenInterface>,
     pub system_program: Program<'info, System>, // needed to close the escrow and vault account
     pub associated_token_program: Program<'info, AssociatedToken>,
@@ -119,6 +119,8 @@ impl<'info> Take<'info> {
 
     pub fn close(&mut self) -> Result<()> {
         // close the escrow account and the vault account here
+        let cpi_program = self.token_program.to_account_info();
+
         let cpi_accounts = CloseAccount {
             account: self.vault.to_account_info(),
             destination: self.taker.to_account_info(),
@@ -132,7 +134,7 @@ impl<'info> Take<'info> {
 
         let signers_seeds = [&seeds[..]];
 
-        let cpi_ctx = CpiContext::new_with_signer(self.system_program.to_account_info(), cpi_accounts, &signers_seeds);
+        let cpi_ctx = CpiContext::new_with_signer(cpi_program, cpi_accounts, &signers_seeds);
 
         close_account(cpi_ctx)?;
 

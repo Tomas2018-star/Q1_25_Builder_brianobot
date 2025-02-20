@@ -7,34 +7,22 @@ import { randomBytes } from 'node:crypto';
 import { confirmTransaction } from "@solana-developers/helpers";
 import { assert } from "chai";
 
-const programId = new PublicKey("ASnvhxNh4U9fwETxahiCCGa18LXjRNUDfvJnNAC5tRyg");
-
 
 describe("escrow", () => {
   const provider = anchor.AnchorProvider.env()
   
   anchor.setProvider(provider);
 
-  const connection = provider.connection;
-
   const program = anchor.workspace.Escrow as Program<Escrow>;
-
-  // accounts involved
-  // maker 
-  // mint_a
-  // mint_b
-  // maker_ata_a
-  // escrow
-  // vault
-  // system_program
-  // token_program
-  // associated_token_program
+  const connection = provider.connection;
 
   let maker: Keypair;
   let taker: Keypair;
   let mintA: anchor.web3.PublicKey;
   let mintB: anchor.web3.PublicKey;
   let makerAtaA: Account;
+  let makerAtaB: Account;
+  let takerAtaA: Account;
   let takerAtaB: Account;
   let vault: anchor.web3.PublicKey;
   let escrow: anchor.web3.PublicKey;
@@ -68,7 +56,6 @@ describe("escrow", () => {
       );
       console.log("✅ Mint B Address: ", mintB);
 
-
       makerAtaA = await getOrCreateAssociatedTokenAccount(
         connection,
         maker,
@@ -76,6 +63,22 @@ describe("escrow", () => {
         maker.publicKey,
       );
       console.log("✅ Maker ATA A: ", makerAtaA.address);
+
+      makerAtaB = await getOrCreateAssociatedTokenAccount(
+        connection,
+        maker,
+        mintB,
+        maker.publicKey,
+      );
+      console.log("✅ Maker ATA B: ", makerAtaB.address);
+      
+      takerAtaA = await getOrCreateAssociatedTokenAccount(
+        connection,
+        taker,
+        mintA,
+        taker.publicKey,
+      );
+      console.log("✅ Taker ATA A: ", takerAtaA.address);
       
       takerAtaB = await getOrCreateAssociatedTokenAccount(
         connection,
@@ -103,6 +106,7 @@ describe("escrow", () => {
       vault = getAssociatedTokenAddressSync(
           mintA,
           escrow,
+          true,
       );
       console.log("✅ Vault Address: ", vault);
 
@@ -111,14 +115,13 @@ describe("escrow", () => {
   it("Make Escrow!", async () => {
       const tx = await program.methods
       .make(seed, new BN(1_000_000_000))
-      .accounts({
+      .accountsPartial({
         maker: maker.publicKey,
         mintA: mintA,
         mintB: mintB,
         makerAtaA: makerAtaA.address,
         escrow: escrow,
         vault: vault,
-        systemProgram: SystemProgram.programId,
         tokenProgram: TOKEN_PROGRAM_ID,
         associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
       })
@@ -128,25 +131,66 @@ describe("escrow", () => {
       console.log("✅ Your Escrow Make transaction signature", tx);
   });
 
-  // it("Request Refund!", async () => {
-  //   const tx = await program.methods
-  //     .refund()
-  //     .accounts({
-  //       maker: maker.publicKey,
-  //       mintA: mintA,
-  //       mintB: mintB,
-  //       makerAtaA: makerAtaA.address,
-  //       escrow: escrow,
-  //       vault: vault,
-  //       systemProgram: SystemProgram.programId,
-  //       tokenProgram: TOKEN_PROGRAM_ID,
-  //       associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
-  //     })
-  //     .signers([maker])
-  //     .rpc();
+  it("Request Refund!", async () => {
+    const tx = await program.methods
+      .refund()
+      .accountsPartial({
+        maker: maker.publicKey,
+        mintA: mintA,
+        mintB: mintB,
+        makerAtaA: makerAtaA.address,
+        escrow: escrow,
+        vault: vault,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+      })
+      .signers([maker])
+      .rpc();
 
-  //     console.log("✅ Your Refund transaction signature", tx);
-  // })
+      console.log("✅ Your Refund transaction signature", tx);
+  })
+
+  // doing this again to test the take instruction
+  it("Make Escrow Again!", async () => {
+      const tx = await program.methods
+      .make(seed, new BN(1_000_000_000))
+      .accountsPartial({
+        maker: maker.publicKey,
+        mintA: mintA,
+        mintB: mintB,
+        makerAtaA: makerAtaA.address,
+        escrow: escrow,
+        vault: vault,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+      })
+      .signers([maker])
+      .rpc();
+
+      console.log("✅ Your Escrow Make transaction signature", tx);
+  });
+
+  it("Take Escrow Worked!", async () => {
+    const tx = await program.methods
+    .take()
+    .accountsPartial({
+      taker: taker.publicKey,
+      maker: maker.publicKey,
+      mintA: mintA,
+      mintB: mintB,
+      takerAtaA: takerAtaA.address,
+      takerAtaB: takerAtaB.address,
+      escrow: escrow,
+      vault: vault,
+      tokenProgram: TOKEN_PROGRAM_ID,
+      associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+    })
+    .signers([taker])
+    .rpc();
+
+    console.log("✅ Your Escrow Take transaction signature", tx);
+});
+
 });
 
 

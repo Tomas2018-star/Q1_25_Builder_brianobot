@@ -6,7 +6,7 @@ use crate::state::EscrowState;
 
 
 #[derive(Accounts)]
-#[instruction(seeds: u8)] // this means i would pass a type u8 to the seeds field inside the instruction
+#[instruction(seeds: u64)] // this means i would pass a type u8 to the seeds field inside the instruction
 // when using multiple instructions params, keep them in the same order in the instruction as provided here
 pub struct Make<'info> {
     #[account(mut)]

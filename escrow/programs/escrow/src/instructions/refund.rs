@@ -28,7 +28,7 @@ pub struct Refund<'info> {
         mut,
         close = maker,
         has_one = maker,
-        seeds = [b"escrow", maker.key().as_ref()], // escrow.seed.to_le_bytes().as_ref() 
+        seeds = [b"escrow", maker.key().as_ref(), escrow.seed.to_le_bytes().as_ref()],  
         bump = escrow.bump,
     )]
     pub escrow: Account<'info, EscrowState>,
@@ -57,9 +57,12 @@ impl<'info> Refund<'info> {
             authority: self.escrow.to_account_info(), // since the escrow account owns the from account (vault account)
         };
 
+        let escrow_seed = self.escrow.seed.to_le_bytes();
+
         let seeds = [
             b"escrow", 
             self.maker.key.as_ref(),
+            escrow_seed.as_ref(),
             &[self.escrow.bump],
         ];
 
