@@ -85,12 +85,7 @@ impl<'info> Initialize<'info> {
             vault_bump: bumps.vault,
             state_bump: bumps.vault_state,
         });
-
-        msg!("📝 Signer Account: {:?}", self.signer);
-        msg!("📝 Vault State Account: {:?}", self.vault_state);
-        msg!("📝 Vault Account: {:?}", self.vault);
-        msg!("📝 System Program: {:?}", self.system_program);
-
+        
         Ok(())
     }
 }
