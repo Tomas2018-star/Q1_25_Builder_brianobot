@@ -24,3 +24,7 @@ A list of things to do to complete the course programs and test them effectively
 ## Staking
 - [ ] Complete the Program Logic
 - [ ] Implement Tests
+
+## Vault
+- [X] Complete the Program Logic
+- [X] Implement Tests

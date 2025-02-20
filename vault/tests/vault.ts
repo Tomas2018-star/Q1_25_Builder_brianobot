@@ -34,7 +34,7 @@ describe("vault", () => {
         vault_state.toBuffer(),
       ], program.programId);
 
-      let airdrop_tx = await airdrop(connection, signer.publicKey, 5);
+      await airdrop(connection, signer.publicKey, 5);
       // airdrop some SOL to the vault so it does not disappear (make it rent exempt)
 
       // let rent_exemption_amount = await calculateRentExemption(connection, vault);
