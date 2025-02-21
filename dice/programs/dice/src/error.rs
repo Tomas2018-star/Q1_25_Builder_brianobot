@@ -11,4 +11,6 @@ pub enum DiceError {
     InvalidAccountCount,
     #[msg("Signature is not verifiable")]
     UnverifiableSignature,
+    #[msg("Refund Cool Down Time Not Elasped")]
+    RefundCooldownNotElapsed,
 }

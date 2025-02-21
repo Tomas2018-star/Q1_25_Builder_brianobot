@@ -38,6 +38,7 @@ pub struct ResolveBet<'info> {
     pub system_program: Program<'info, System>,
 }
 
+
 impl<'info> ResolveBet<'info> {
     pub fn verify_ed25519_signature(&mut self, sig: &[u8]) -> Result<()> {
         // this allows us to get the first instruction of the current transaction
