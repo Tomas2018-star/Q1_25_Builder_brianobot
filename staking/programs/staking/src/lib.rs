@@ -4,7 +4,7 @@ pub mod error;
 pub mod state;
 pub mod contexts;
 
-pub use contexts::{InitializeConfig, RegisterUser, Stake, Unstake};
+pub use contexts::*;
 
 declare_id!("EJq6mSWxKgnQFP9NBQzJ6Ngk3bK7CC66oGAwCG3wAvrN");
 
