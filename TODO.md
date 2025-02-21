@@ -14,8 +14,8 @@ A list of things to do to complete the course programs and test them effectively
 - [ ] Implement Tests
 
 ## Escrow
-- [ ] Complete the Program Logic
-- [ ] Implement Tests
+- [X] Complete the Program Logic
+- [X] Implement Tests
 
 ## Marketplace
 - [ ] Complete the Program Logic
