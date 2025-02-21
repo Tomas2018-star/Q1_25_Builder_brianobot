@@ -21,10 +21,15 @@ pub mod dice {
         ctx.accounts.create_bet(seed, roll, amount, &ctx.bumps)?;
         Ok(())
     }
+    
+    pub fn refund_bet(ctx: Context<RefundBet>, amount: u64) -> Result<()> {
+        ctx.accounts.withdraw_from_vault(amount, &ctx.bumps)?;
+        Ok(())
+    }
 
     pub fn resolve_bet(ctx: Context<ResolveBet>, sig: Vec<u8>) -> Result<()> {
         ctx.accounts.verify_ed25519_signature(&sig)?;
-        // ctx.accounts.resolve_bet(&sig, &ctx.bumps)?;
+        ctx.accounts.resolve_bet(&sig, &ctx.bumps)?;
         Ok(())
     }
 }
