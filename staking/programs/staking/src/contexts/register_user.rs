@@ -16,7 +16,6 @@ pub struct RegisterUser<'info> {
         bump,
     )]
     pub user_account: Account<'info, UserAccountState>,
-
     pub system_program: Program<'info, System>, // needed because we are initializing an account
 }
 
