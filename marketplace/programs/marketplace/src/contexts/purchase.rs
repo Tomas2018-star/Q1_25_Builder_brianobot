@@ -128,8 +128,7 @@ impl<'info> Purchase<'info> {
 
         let cpi_ctx = CpiContext::new_with_signer(cpi_program, cpi_accounts, signer_seeds);
 
-        transfer_checked(cpi_ctx, 1, 0);
-
+        transfer_checked(cpi_ctx, 1, 0)?;
 
         Ok(())
     }
