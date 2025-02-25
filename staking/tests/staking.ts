@@ -12,13 +12,25 @@ describe("staking", () => {
   anchor.setProvider(provider);
 
   const program = anchor.workspace.Staking as Program<Staking>;
-
   const connection = program.provider.connection;
 
   let admin = anchor.web3.Keypair.generate();
+  let config: PublicKey;
+  let configBump;
+  let rewardsMint;
+  let rewardsMintBump;
 
   before(async () => {
-
+    [config, configBump] = PublicKey.findProgramAddressSync([
+        Buffer.from("stake_config"),
+      ], program.programId);
+      console.log("✅ Config PDA: ", config);
+    
+      [rewardsMint, rewardsMintBump] = PublicKey.findProgramAddressSync([
+        Buffer.from("rewards"),
+        config.toBuffer(),
+      ], program.programId);
+      console.log("✅ Reward Mint PDA: ", rewardsMint);
   });
 
   it("Config Is initialized!", async () => {
@@ -31,6 +43,8 @@ describe("staking", () => {
     )
       .accountsPartial({
         admin: admin.publicKey,
+        config: config,
+        rewardsMint: rewardsMint,
         tokenProgram: TOKEN_2022_PROGRAM_ID,
       })
       .signers([admin])
