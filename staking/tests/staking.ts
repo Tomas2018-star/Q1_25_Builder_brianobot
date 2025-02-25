@@ -15,10 +15,14 @@ describe("staking", () => {
   const connection = program.provider.connection;
 
   let admin = anchor.web3.Keypair.generate();
+  let user = anchor.web3.Keypair.generate();
+
   let config: PublicKey;
   let configBump;
   let rewardsMint;
   let rewardsMintBump;
+  let userAccount;
+  let userAccountBump;
 
   before(async () => {
     [config, configBump] = PublicKey.findProgramAddressSync([
@@ -29,6 +33,12 @@ describe("staking", () => {
       [rewardsMint, rewardsMintBump] = PublicKey.findProgramAddressSync([
         Buffer.from("rewards"),
         config.toBuffer(),
+      ], program.programId);
+      console.log("✅ Reward Mint PDA: ", rewardsMint);
+     
+      [userAccount, userAccountBump] = PublicKey.findProgramAddressSync([
+        Buffer.from("user_account"),
+        user.publicKey.toBuffer(),
       ], program.programId);
       console.log("✅ Reward Mint PDA: ", rewardsMint);
   });
@@ -50,6 +60,19 @@ describe("staking", () => {
       .signers([admin])
       .rpc();
     console.log("Your transaction signature", tx);
+  });
+  
+  it("User is Registered!", async () => {
+    await airdrop(connection, user.publicKey, 100);
+
+    const tx = await program.methods.registerUser()
+      .accountsPartial({
+        user: user.publicKey,
+        userAccount: userAccount,
+      })
+      .signers([user])
+      .rpc();
+    console.log("Your Register User transaction signature", tx);
   });
 });
 
