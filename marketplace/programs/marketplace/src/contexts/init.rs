@@ -28,7 +28,7 @@ pub struct Initialize<'info> {
     #[account(
         init, 
         payer = admin,
-        seeds = [b"rewards", marketplace.key().as_ref()],
+        seeds = [b"rewards_mint", marketplace.key().as_ref()],
         bump,
         // when initializing a mint with anchor
         // you must specify the mint authority and decimal
