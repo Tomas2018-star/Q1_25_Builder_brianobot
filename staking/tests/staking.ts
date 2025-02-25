@@ -1,7 +1,7 @@
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
 import { Staking } from "../target/types/staking";
-import { TOKEN_2022_PROGRAM_ID } from "@solana/spl-token";
+import { createMint, getOrCreateAssociatedTokenAccount, TOKEN_2022_PROGRAM_ID } from "@solana/spl-token";
 import { LAMPORTS_PER_SOL, PublicKey, SystemProgram } from "@solana/web3.js";
 import { confirmTransaction } from "@solana-developers/helpers";
 
@@ -23,6 +23,8 @@ describe("staking", () => {
   let rewardsMintBump;
   let userAccount;
   let userAccountBump;
+  let nftMint;
+  let nftMintATA;
 
   before(async () => {
     [config, configBump] = PublicKey.findProgramAddressSync([
@@ -41,6 +43,18 @@ describe("staking", () => {
         user.publicKey.toBuffer(),
       ], program.programId);
       console.log("✅ Reward Mint PDA: ", rewardsMint);
+
+      await airdrop(connection, admin.publicKey, 100);
+      nftMint = await createMint(connection, admin, user.publicKey, null, 6);
+
+      nftMintATA = await getOrCreateAssociatedTokenAccount(
+        connection,
+        admin,
+        nftMint,
+        user.publicKey,
+      );
+      console.log("NFTMINT: ", nftMintATA);
+      
   });
 
   it("Config Is initialized!", async () => {
@@ -68,6 +82,20 @@ describe("staking", () => {
     const tx = await program.methods.registerUser()
       .accountsPartial({
         user: user.publicKey,
+        userAccount: userAccount,
+      })
+      .signers([user])
+      .rpc();
+    console.log("Your Register User transaction signature", tx);
+  });
+  
+  it("Stake is Created!", async () => {
+    await airdrop(connection, user.publicKey, 100);
+
+    const tx = await program.methods.stake()
+      .accountsPartial({
+        user: user.publicKey,
+        nftMint: nftMint,
         userAccount: userAccount,
       })
       .signers([user])
