@@ -10,7 +10,7 @@ This is a comprehensive reference to the codes I wrote and edited while learning
 - [airdrop](/airdrop/): Contain typescript code written and edited for the pre-requisite task
 - [amm-program](/amm-program): Contains Anchor program for an Automated Market Maker Smart Contract
 - [crowd_fund_arch_diagram](/crowd_fund_arch_diagram): Contains Architectural Diagram for my Capstone project
-- [crowdfi](/crowdfi/): My Capstone Project
+- [crowdfi_revamped](/crowdfi_revamped/): My Capstone Project
 - [dice](/dice/): Contains Anchor program for a Dice Game
 - [escrow](/escrow/): Contains Anchor program for an Escrow Smart Contract
 - [marketplace](/marketplace/): Contains Anchor program for NFT Marketplace Smart Contract
