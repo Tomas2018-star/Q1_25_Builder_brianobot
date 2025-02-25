@@ -3,17 +3,14 @@ use anchor_lang::prelude::*;
 pub mod state;
 pub mod error;
 pub mod contexts;
-pub mod instructions;
 
-pub use contexts::{Initialize, List, Delist};
+pub use contexts::*;
 
 
 declare_id!("F1ARGgzeMbriizXy4x2XiJ1r3sGS8RYmXhQm1iVySdpp");
 
 #[program]
 pub mod marketplace {
-    use contexts::Purchase;
-
     use super::*;
 
     pub fn initialize(ctx: Context<Initialize>, name: String, fee: u16) -> Result<()> {

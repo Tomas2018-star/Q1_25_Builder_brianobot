@@ -112,6 +112,8 @@ impl<'info> Delist<'info> {
             &[self.listing.bump],
         ];
 
+        let signer_seeds = &[&seeds[..]];
+
         let cpi_ctx = CpiContext::new_with_signer(cpi_program, cpi_accounts, signer_seeds);
         close_account(cpi_ctx)?;
         Ok(())
