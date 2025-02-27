@@ -145,6 +145,7 @@ impl<'info> Stake<'info> {
  
         let seeds = [ 
             b"stake_account",
+            // TODO: Possible overhead when using to_account_info()
             self.nft_mint.to_account_info().key.as_ref(),
             self.config.to_account_info().key.as_ref(),
             &[self.stake_account.bump],

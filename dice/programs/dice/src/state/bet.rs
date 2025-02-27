@@ -19,6 +19,7 @@ impl Bet {
         s.extend_from_slice(&self.slot.to_le_bytes());
         s.extend_from_slice(&self.amount.to_le_bytes());
         // TODO: why didn't we call the to_le_bytes on the two fields below 
+        // SOLUTION: u8 are bytes already, 
         s.extend_from_slice(&[self.roll, self.bump]);
         s
     }
