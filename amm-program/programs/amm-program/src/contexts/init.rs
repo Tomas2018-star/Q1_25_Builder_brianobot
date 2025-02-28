@@ -28,6 +28,7 @@ pub struct Initialize<'info> {
         payer = initializer,
         associated_token::mint = mint_x,
         associated_token::authority = config,
+        associated_token::token_program = token_program,
     )]
     // needed to store the token x
     pub vault_x: Account<'info, TokenAccount>,
@@ -38,6 +39,7 @@ pub struct Initialize<'info> {
         // and it mint must match mint_y and it authority must match config
         associated_token::mint = mint_y,
         associated_token::authority = config,
+        associated_token::token_program = token_program,
     )]
     // needed to store the token y
     // if the intent is to check ATA alone, use Account<'info, AssociatedToken>

@@ -25,6 +25,7 @@ pub struct Purchase<'info> {
         payer = taker,
         associated_token::mint = maker_mint,
         associated_token::authority = taker,
+        associated_token::token_program = token_program,
     )]
     // this is the Token account to hold the token to be purchased from maker
     pub taker_ata: InterfaceAccount<'info, TokenAccount>,
@@ -32,6 +33,7 @@ pub struct Purchase<'info> {
         mut,
         associated_token::mint = maker_mint,
         associated_token::authority = listing,
+        associated_token::token_program = token_program,
     )]
     // this is the account that stores the token and would release the token the taker once payment is comfirmed
     // the vault is Associated Token Account

@@ -30,6 +30,7 @@ pub struct Unstake<'info> {
         associated_token::mint = nft_mint, // accounts are treated as pubkey due to rust Deref<Target = Pubkey>
         associated_token::authority = user, // same rules applies here
         // so technically associated_token::authority = user.key() is still correct
+        associated_token::token_program = token_program,
     )]
     // this is needed to store the NFT for the user, actually this is needed to hold the nft in question
     pub nft_mint_ata: Account<'info, TokenAccount>,

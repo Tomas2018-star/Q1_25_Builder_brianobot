@@ -43,18 +43,21 @@ pub struct Deposit<'info> {
         mut,
         associated_token::mint = mint_x, // vault_x.mint == mint_x.key() this is the full form
         associated_token::authority = config,
+        associated_token::token_program = token_program,
     )]
     pub vault_x: InterfaceAccount<'info, TokenAccount>,
     #[account(
         mut,
         associated_token::mint = mint_y,
         associated_token::authority = config,
+        associated_token::token_program = token_program,
     )]
     pub vault_y: InterfaceAccount<'info, TokenAccount>,
     #[account(
         mut,
         associated_token::authority = lp_provider,
         associated_token::mint = mint_x,
+        associated_token::token_program = token_program,
     )]
     pub lp_provider_ata_x: InterfaceAccount<'info, TokenAccount>,
     #[account(
@@ -62,6 +65,7 @@ pub struct Deposit<'info> {
         // must already have ata for those pair
         associated_token::authority = lp_provider,
         associated_token::mint = mint_y,
+        associated_token::token_program = token_program,
     )]
     pub lp_provider_ata_y: InterfaceAccount<'info, TokenAccount>,
     #[account(
@@ -69,6 +73,7 @@ pub struct Deposit<'info> {
         payer = lp_provider,
         associated_token::authority = lp_provider, // this checks that the lp_provider_ata_lp.owner = lp_provider.key()
         associated_token::mint = mint_lp, // this checks that the lp_provider_ata_lp.mint = mint_lp.key()
+        associated_token::token_program = token_program,
     )]
     pub lp_provider_ata_lp: InterfaceAccount<'info, TokenAccount>,
 

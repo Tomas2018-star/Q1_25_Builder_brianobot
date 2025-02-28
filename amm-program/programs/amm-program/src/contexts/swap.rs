@@ -39,12 +39,14 @@ pub struct Swap<'info> {
         mut,
         associated_token::mint = mint_x, // vault_x.mint == mint_x.key() this is the full form
         associated_token::authority = config,
+        associated_token::token_program = token_program,
     )]
     pub vault_x: InterfaceAccount<'info, TokenAccount>,
     #[account(
         mut,
         associated_token::mint = mint_y,
         associated_token::authority = config,
+        associated_token::token_program = token_program,
     )]
     pub vault_y: InterfaceAccount<'info, TokenAccount>,
     #[account(
@@ -59,6 +61,7 @@ pub struct Swap<'info> {
         payer = user,
         associated_token::mint = mint_y,
         associated_token::authority = user,
+        associated_token::token_program = token_program,
     )]
     pub user_ata_y: InterfaceAccount<'info, TokenAccount>,
 
