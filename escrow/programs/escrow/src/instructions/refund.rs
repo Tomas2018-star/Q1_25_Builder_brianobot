@@ -20,6 +20,7 @@ pub struct Refund<'info> {
         mut,
         associated_token::mint = mint_a, // ? how does this access works associated_token::mint = mint_a
         associated_token::authority = maker,
+        associated_token::token_program = token_program,
     )]
     // the assumption here is that the maker has already created the associated token account
     // since they want to exchange token a for token b they must already have an ATA to store token a
@@ -36,6 +37,7 @@ pub struct Refund<'info> {
         mut,
         associated_token::mint = mint_a,
         associated_token::authority = escrow,
+        associated_token::token_program = token_program,
     )]
     // this ATA would hold the token received from maker of the escrow
     pub vault: InterfaceAccount<'info, TokenAccount>,

@@ -22,6 +22,7 @@ pub struct Take<'info> {
         payer = taker,
         associated_token::mint = mint_a, // ? how does this access works associated_token::mint = mint_a
         associated_token::authority = taker,
+        associated_token::token_program = token_program,
     )]
     // this is needed to store the tokens that would be received from 
     pub taker_ata_a: Box<InterfaceAccount<'info, TokenAccount>>,
@@ -29,6 +30,7 @@ pub struct Take<'info> {
         mut,  // this is expected to already exist for the taker since they must own those tokens
         associated_token::mint = mint_b, // ? how does this access works associated_token::mint = mint_a
         associated_token::authority = taker,
+        associated_token::token_program = token_program,
     )]
     // this is needed to store the tokens that would be give in the escrow from the take
     pub taker_ata_b: Box<InterfaceAccount<'info, TokenAccount>>,
@@ -39,7 +41,7 @@ pub struct Take<'info> {
         // they are used as checks when the account is not init, and vice versa
         associated_token::mint = mint_b, // ? how does this access works associated_token::mint = mint_a
         associated_token::authority = maker ,// we can not use escrow.maker, // difference between account and public keys as used in different part of anchor
-    
+        associated_token::token_program = token_program,
     )] 
     pub maker_ata_b: Box<InterfaceAccount<'info, TokenAccount>>, 
     #[account(
@@ -59,6 +61,7 @@ pub struct Take<'info> {
         // vault.mint == mint_a
         associated_token::authority = escrow,
         // vault.authority == escrow
+        associated_token::token_program = token_program,
     )]
     pub vault: Box<InterfaceAccount<'info, TokenAccount>>,
     pub token_program: Interface<'info, TokenInterface>,

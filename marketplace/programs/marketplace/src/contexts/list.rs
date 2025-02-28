@@ -15,6 +15,7 @@ pub struct List<'info> {
         mut,
         associated_token::mint = maker_mint,
         associated_token::authority = maker,
+        associated_token::token_program = token_program,
     )]
     pub maker_ata: InterfaceAccount<'info, TokenAccount>,
     #[account(
@@ -27,6 +28,7 @@ pub struct List<'info> {
         payer = maker,
         associated_token::mint = maker_mint,
         associated_token::authority = listing,  
+        associated_token::token_program = token_program,
     )]
     pub vault: InterfaceAccount<'info, TokenAccount>,
     #[account(
